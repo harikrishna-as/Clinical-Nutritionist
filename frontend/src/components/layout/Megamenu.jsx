@@ -235,8 +235,8 @@ function MegaPanel({ data, align = 'center', onMouseEnter, onMouseLeave }) {
               const Icon = ICONS[d.icon] || Building2
               return (
                 <Link key={d.slug} to={`/departments/${d.slug}`} className="mega-card">
-                  <span className="mega-card-ico" style={{ background: `${d.color}22`, color: d.color }}>
-                    <Icon size={18} />
+                  <span className="mega-card-ico" style={{ background: `${d.color}22`, color: d.color, overflow: 'hidden', padding: d.logo ? 0 : undefined }}>
+                    {d.logo ? <img src={d.logo} alt={`${d.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <Icon size={18} />}
                   </span>
                   <strong>{d.name}</strong>
                   <em>{d.full}</em>

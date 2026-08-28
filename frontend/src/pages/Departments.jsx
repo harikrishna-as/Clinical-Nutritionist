@@ -10,6 +10,7 @@ import { DEPARTMENTS } from '../lib/data'
 import DeptDeck from '../components/cinematic/DeptDeck'
 import DepartmentSpiral from '../components/cinematic/DepartmentSpiral'
 import SplineEmbed from '../components/SplineEmbed'
+import DeptHeroThree from '../components/DeptHeroThree'
 
 const ICONS = { Activity, Monitor, Stethoscope, Pill, Syringe, Baby, Heart, Shield, HeartPulse, Gauge, User, Droplets, Ribbon, Cctv, Scissors, Apple, Milk }
 
@@ -21,11 +22,15 @@ export default function Departments() {
 
   return (
     <div className="page">
-      <section className="page-hero" style={{ position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.32 }}>
+      <section className="page-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: 380 }}>
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.38 }}>
           <SplineEmbed scene="departments" style={{ width: '100%', height: '100%' }} />
         </div>
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(10,14,26,0.12) 0%, rgba(10,14,26,0.72) 65%, rgba(10,14,26,0.92) 100%)' }} />
+        {/* different types of three.js — subtle field of geometries behind title */}
+        <div style={{ position: 'absolute', inset: 0, opacity: 0.42, pointerEvents: 'none' }}>
+          <DeptHeroThree dept={{ slug: 'departments', color: '#60a5fa' }} opacity={0.52} />
+        </div>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(10,14,26,0.08) 0%, rgba(10,14,26,0.68) 65%, rgba(10,14,26,0.94) 100%)' }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <h1 style={{ fontFamily: 'var(--display)', letterSpacing: '-0.03em' }}>Clinical Nutrition <span className="gradient-text">Departments</span></h1>
           <p style={{ maxWidth: 640, color: '#D1D5DB' }}>Every ward where a clinical nutritionist is posted — screening tools, feeding protocols and care roles, explained plainly.</p>
@@ -65,7 +70,9 @@ export default function Departments() {
                     transition={{ duration: 0.3, delay: i * 0.04 }}
                   >
                     <Link to={`/departments/${d.slug}`} className="dept-card">
-                      <span className="dept-card-ico" style={{ background: `${d.color}1f`, color: d.color }}><Icon size={26} /></span>
+                      <span className="dept-card-ico" style={{ background: `${d.color}1f`, color: d.color, overflow: 'hidden', padding: d.logo ? 0 : undefined }}>
+                        {d.logo ? <img src={d.logo} alt={`${d.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <Icon size={26} />}
+                      </span>
                       <div className="dept-card-code" style={{ color: d.color }}>{d.name}</div>
                       <h3>{d.full}</h3>
                       <p>{d.tagline}</p>

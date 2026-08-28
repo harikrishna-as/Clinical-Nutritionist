@@ -21,7 +21,9 @@ export default function DepartmentShowcase({ items = [] }) {
         >
           <Link to={`/departments/${d.slug || d.id}`} className="expand-card__link">
             <div className="expand-card__media" style={{ background: mediaBg(d) }}>
-              <span className="expand-card__icon">{d.icon}</span>
+              <span className="expand-card__icon" style={{ overflow: 'hidden', padding: d.logo ? 0 : undefined }}>
+                {d.logo ? <img src={d.logo} alt={`${d.title} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : d.icon}
+              </span>
             </div>
             <div className="expand-card__body">
               <h3 className="expand-card__title">{d.title}</h3>

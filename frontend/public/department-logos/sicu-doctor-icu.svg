@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <rect width="256" height="256" rx="32" fill="white"/>
+  <ellipse cx="92" cy="82" rx="52" ry="54" fill="#F9A8A8" stroke="#7F1D1D" stroke-width="8"/>
+  <path d="M52 42 Q92 8 132 42" fill="#475569" stroke="#7F1D1D" stroke-width="8"/>
+  <circle cx="92" cy="72" r="28" fill="white" stroke="#7F1D1D" stroke-width="8"/>
+  <circle cx="92" cy="72" r="16" fill="#FACC15" stroke="#7F1D1D" stroke-width="4"/>
+  <rect x="32" y="66" width="28" height="14" rx="7" fill="#6EE7B7" stroke="#7F1D1D" stroke-width="6"/>
+  <rect x="124" y="66" width="28" height="14" rx="7" fill="#6EE7B7" stroke="#7F1D1D" stroke-width="6"/>
+  <path d="M92 126 L72 156 L92 176 L112 156 Z" fill="#F9A8A8" stroke="#7F1D1D" stroke-width="6"/>
+  <path d="M62 148 Q92 132 122 148 L132 208 Q92 222 52 208 Z" fill="#EC4899" stroke="#7F1D1D" stroke-width="6"/>
+  <path d="M42 148 Q32 168 42 208 L62 208 Q58 180 62 148" fill="#84CC16" stroke="#7F1D1D" stroke-width="6"/>
+  <path d="M142 148 Q152 168 142 208 L122 208 Q126 180 122 148" fill="#84CC16" stroke="#7F1D1D" stroke-width="6"/>
+  <rect x="36" y="172" width="42" height="18" rx="4" fill="white" stroke="#7F1D1D" stroke-width="5"/>
+  <circle cx="168" cy="168" r="62" fill="#67E8F9" stroke="#7F1D1D" stroke-width="8"/>
+  <text x="168" y="182" text-anchor="middle" font-family="Arial Black" font-size="42" font-weight="900" fill="#7F1D1D">ICU</text>
+  <path d="M132 188 Q144 198 168 202 Q184 204 192 196" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.9"/>
+</svg>

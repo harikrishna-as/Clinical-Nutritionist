@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <rect width="256" height="256" rx="32" fill="#0F172A"/>
+  <path d="M128 48 C108 28 72 28 56 56 C40 84 64 124 128 176 C192 124 216 84 200 56 C184 28 148 28 128 48 Z" fill="#EF4444" stroke="#B91C1C" stroke-width="6"/>
+  <path d="M128 48 C118 36 104 36 96 48" fill="white" opacity="0.5"/>
+  <path d="M32 96 H78 L96 68 L118 124 L138 44 L164 104 L182 72 H224" stroke="#FBBF24" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- hands -->
+  <path d="M24 112 C8 132 12 168 42 188 L78 208 L92 148 L72 112 L58 82 C50 72 38 92 24 112 Z" fill="#FEC9A6" stroke="#111" stroke-width="4"/>
+  <path d="M232 112 C248 132 244 168 214 188 L178 208 L164 148 L184 112 L198 82 C206 72 218 92 232 112 Z" fill="#FEC9A6" stroke="#111" stroke-width="4"/>
+  <rect x="72" y="208" width="48" height="32" rx="4" fill="white" stroke="#111" stroke-width="4"/>
+  <rect x="136" y="208" width="48" height="32" rx="4" fill="white" stroke="#111" stroke-width="4"/>
+  <rect x="64" y="232" width="64" height="18" rx="4" fill="#2563EB"/>
+  <rect x="128" y="232" width="64" height="18" rx="4" fill="#2563EB"/>
+</svg>

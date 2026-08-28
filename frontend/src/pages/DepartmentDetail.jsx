@@ -15,6 +15,7 @@ import Spotlight from '../components/ui/Spotlight'
 import RadialProgress from '../components/ui/RadialProgress'
 import EditBadge from '../components/ui/EditBadge'
 import FilterDisclosure from '../components/ui/FilterDisclosure'
+import DeptHeroThree from '../components/DeptHeroThree'
 
 const ICONS = { Activity, Monitor, Stethoscope, Pill, Syringe, Baby, Heart, Shield, HeartPulse, Gauge, User, Droplets, Ribbon, Cctv, Scissors, Apple, Milk }
 
@@ -45,11 +46,13 @@ export default function DepartmentDetail() {
 
   return (
     <div className="page">
-      <section className="dept-hero" style={{ background: `linear-gradient(135deg, ${dept.color}22, rgba(15,23,42,0.9))` }}>
-        <div className="container">
+      <section className="dept-hero" style={{ position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, ${dept.color}18, rgba(7,12,28,0.96))` }}>
+        <DeptHeroThree dept={dept} opacity={0.42} />
+        <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(800px 400px at 20% 30%, ${dept.color}16, transparent 65%), linear-gradient(180deg, rgba(7,12,28,0.22) 0%, rgba(7,12,28,0.88) 100%)`, pointerEvents: 'none' }} />
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="dept-hero-inner">
-            <motion.div className="dept-hero-ico" style={{ background: `${dept.color}22`, color: dept.color, borderColor: `${dept.color}55` }} initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }}>
-              <Icon size={44} />
+            <motion.div className="dept-hero-ico" style={{ background: `${dept.color}22`, color: dept.color, borderColor: `${dept.color}55`, overflow: 'hidden', padding: dept.logo ? 0 : undefined }} initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }}>
+              {dept.logo ? <img src={dept.logo} alt={`${dept.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <Icon size={44} />}
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
               <span className="dept-hero-code" style={{ color: dept.color }}>{dept.name} DEPARTMENT</span>

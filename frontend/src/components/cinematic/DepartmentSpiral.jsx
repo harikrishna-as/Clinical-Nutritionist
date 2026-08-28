@@ -35,8 +35,8 @@ function SpiralCard({ d, index, N, p, radius, vertical }) {
         <Link to={`/departments/${d.slug}`} className="sp-card" style={{ transform: 'translate(-50%, -50%)' }}>
           <span className="sp-card__num">{num}</span>
           <span className="sp-card__glow" style={{ background: `radial-gradient(circle at 20% 15%, ${d.color}59, transparent 60%)` }} />
-          <span className="sp-card__ico" style={{ background: `${d.color}1f`, color: d.color, boxShadow: `0 0 40px ${d.color}2e` }}>
-            <Icon size={24} strokeWidth={1.6} />
+          <span className="sp-card__ico" style={{ background: `${d.color}1f`, color: d.color, boxShadow: `0 0 40px ${d.color}2e`, overflow: 'hidden', padding: d.logo ? 0 : undefined }}>
+            {d.logo ? <img src={d.logo} alt={`${d.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <Icon size={24} strokeWidth={1.6} />}
           </span>
           <span className="sp-card__code" style={{ color: d.color }}>{d.name}</span>
           <h3 className="sp-card__name">{d.full}</h3>
@@ -92,7 +92,7 @@ export default function DepartmentSpiral({ departments = [] }) {
           const Icon = ICONS[d.icon] || Activity
           return (
             <Link key={d.slug} to={`/departments/${d.slug}`} className="dept-card">
-              <span className="dept-card-ico" style={{ background: `${d.color}1f`, color: d.color }}><Icon size={26} /></span>
+              <span className="dept-card-ico" style={{ background: `${d.color}1f`, color: d.color, overflow: 'hidden', padding: d.logo ? 0 : undefined }}>{d.logo ? <img src={d.logo} alt={`${d.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <Icon size={26} />}</span>
               <div className="dept-card-code" style={{ color: d.color }}>{d.name}</div>
               <h3>{d.full}</h3>
               <p>{d.tagline}</p>
