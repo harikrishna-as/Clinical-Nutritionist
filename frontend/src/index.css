@@ -619,8 +619,12 @@ h1, h2, h3, h4 { font-family: var(--display); line-height: 1.15; letter-spacing:
 .dept-hero-code { font-size: 12.5px; font-weight: 800; letter-spacing: 2.5px; }
 .dept-hero h1 { font-size: clamp(28px, 4.5vw, 42px); margin: 6px 0; }
 .dept-hero p { color: #D1D5DB; font-size: 15.5px; max-width: 640px; }
-.dept-overview { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
-.dept-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.dept-overview { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; align-items: stretch; }
+.dept-overview > * { display: flex; height: 100%; min-height: 0; }
+.dept-overview .card { height: 100%; min-height: 100%; display: flex; flex-direction: column; }
+.dept-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch; }
+.dept-detail-grid > * { display: flex; height: 100%; min-height: 0; }
+.dept-detail-grid .card { height: 100%; min-height: 100%; display: flex; flex-direction: column; }
 @media (max-width: 900px) { .dept-overview, .dept-detail-grid { grid-template-columns: 1fr; } }
 .dept-overview h3, .dept-detail-grid h3 { display: flex; align-items: center; gap: 10px; font-size: 18px; margin-bottom: 16px; color: #fff; }
 .dept-overview p { color: #D1D5DB; font-size: 14px; line-height: 1.7; }
