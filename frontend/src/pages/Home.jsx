@@ -81,13 +81,70 @@ export default function Home() {
   const pipeY = useTransform(pipeProg, [0, 0.12], [46, 0])
 
   return (
-    <div>
-      {/* ==== Hero — Spline (replaces Three.js) ==== */}
-      <section className="home-hero" style={{ position: 'relative', overflow: 'hidden' }}>
-        <motion.div className="hero-3d-bg" style={{ scale: hero3DScale, opacity: hero3DFade, position: 'absolute', inset: 0, zIndex: 0 }}>
+    <div style={{ position: 'relative' }}>
+      {/* ==== Full-page Spline — bigger, covers Home, ball on right, left black blur ==== */}
+      <motion.div
+        className="hero-3d-bg"
+        style={{
+          scale: hero3DScale,
+          opacity: hero3DFade,
+          position: 'fixed',
+          inset: 0,
+          zIndex: 0,
+          pointerEvents: 'none',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Spline pushed to right side, bigger */}
+        <div
+          style={{
+            position: 'absolute',
+            right: '-8%',
+            top: '50%',
+            width: '68%',
+            height: '126%',
+            minWidth: 560,
+            minHeight: 720,
+            transform: 'translateY(-50%) scale(1.08)',
+            transformOrigin: 'center right',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          }}
+        >
           <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} />
-        </motion.div>
-        <motion.div className="hero-shade" style={{ opacity: heroFade }} />
+        </div>
+        {/* Left black blur — keeps text readable */}
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: '58%',
+            background: 'linear-gradient(90deg, rgba(5,5,8,0.98) 0%, rgba(5,5,8,0.94) 42%, rgba(5,5,8,0.78) 62%, rgba(5,5,8,0.32) 82%, rgba(5,5,8,0) 100%)',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            pointerEvents: 'none',
+          }}
+        />
+        {/* Extra soft dark under Spline on right to avoid white flash */}
+        <div
+          style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: '72%',
+            background: 'radial-gradient(900px 700px at 68% 52%, rgba(0,0,0,0) 42%, rgba(5,5,8,0.22) 100%)',
+            pointerEvents: 'none',
+          }}
+        />
+      </motion.div>
+
+      {/* ==== Hero — content over fixed Spline ==== */}
+      <section className="home-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
+        <motion.div className="hero-shade" style={{ opacity: heroFade, position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }} />
 
         <div className="container hero-content">
           <motion.div style={{ y: heroY, opacity: heroFade }}>
