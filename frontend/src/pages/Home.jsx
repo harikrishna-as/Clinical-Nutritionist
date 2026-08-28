@@ -82,7 +82,7 @@ export default function Home() {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* ==== Full-page Spline — bigger, covers Home, ball on right, left black blur ==== */}
+      {/* ==== Full-page Spline — even bigger, ball centered on right, covers display, no left blur ==== */}
       <motion.div
         className="hero-3d-bg"
         style={{
@@ -95,17 +95,17 @@ export default function Home() {
           overflow: 'hidden',
         }}
       >
-        {/* Spline pushed to right side, bigger */}
+        {/* Spline even bigger, leaves screen, ball in center-right */}
         <div
           style={{
             position: 'absolute',
-            right: '-8%',
+            right: '-18%',
             top: '50%',
-            width: '68%',
-            height: '126%',
-            minWidth: 560,
-            minHeight: 720,
-            transform: 'translateY(-50%) scale(1.08)',
+            width: '82%',
+            height: '148%',
+            minWidth: 640,
+            minHeight: 800,
+            transform: 'translateY(-46%) scale(1.18)',
             transformOrigin: 'center right',
             display: 'flex',
             alignItems: 'center',
@@ -114,32 +114,6 @@ export default function Home() {
         >
           <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} />
         </div>
-        {/* Left black blur — keeps text readable */}
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: '58%',
-            background: 'linear-gradient(90deg, rgba(5,5,8,0.98) 0%, rgba(5,5,8,0.94) 42%, rgba(5,5,8,0.78) 62%, rgba(5,5,8,0.32) 82%, rgba(5,5,8,0) 100%)',
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            pointerEvents: 'none',
-          }}
-        />
-        {/* Extra soft dark under Spline on right to avoid white flash */}
-        <div
-          style={{
-            position: 'absolute',
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: '72%',
-            background: 'radial-gradient(900px 700px at 68% 52%, rgba(0,0,0,0) 42%, rgba(5,5,8,0.22) 100%)',
-            pointerEvents: 'none',
-          }}
-        />
       </motion.div>
 
       {/* ==== Hero — content over fixed Spline ==== */}
