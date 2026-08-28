@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react'
 
-// User's new community file — may be private/deleted (prod → 403), so we have a verified public fallback
+// Primary hero is the new published prod URL provided by user — verified public (200)
 const FILE_IDS = {
-  hero: 'f0b55004-c297-4fa0-b2dc-81899f3b6ac1',
+  hero: 'FNrG0mwH9paHq-RG',
   finale: 'fe773050-28ff-478f-a162-5006b36ecec0',
   departments: '7ffaf321-83b9-473b-a02a-674c1417ff31',
 }
 
 const SPLINE_SCENES = {
-  hero: `https://prod.spline.design/${FILE_IDS.hero}/scene.splinecode`,
+  hero: 'https://prod.spline.design/FNrG0mwH9paHq-RG/scene.splinecode',
   finale: `https://prod.spline.design/${FILE_IDS.finale}/scene.splinecode`,
   departments: `https://prod.spline.design/${FILE_IDS.departments}/scene.splinecode`,
 }
 
-// Verified public Spline scene — always returns 200 (docs example)
+// Fallback if hero ever fails — keep docs example as safety
 const FALLBACK_SCENE = 'https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode'
 
 function MinimalFallback({ style, className }) {
@@ -61,7 +61,7 @@ function SplineViewer({ scene, style, className }) {
       return new Promise((resolve) => {
         const s = document.createElement('script')
         s.type = 'module'
-        s.src = 'https://unpkg.com/@splinetool/viewer@1.10.57/build/spline-viewer.js'
+        s.src = 'https://cdn.spline.design/@splinetool/viewer@2.0.10/build/spline-viewer.js'
         s.onload = () => resolve(true)
         s.onerror = () => resolve(false)
         document.head.appendChild(s)
