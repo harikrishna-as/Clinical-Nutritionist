@@ -12,11 +12,11 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [err, setErr] = useState('')
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     setErr('')
     try {
-      login(email, password)
+      await login(email, password)
       nav(from, { replace: true })
     } catch (ex) {
       setErr(ex.message)

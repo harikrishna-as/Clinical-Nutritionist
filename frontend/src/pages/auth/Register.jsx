@@ -11,10 +11,10 @@ export default function Register() {
   const [password, setPassword] = useState('')
   const [err, setErr] = useState('')
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     try {
-      register({ name, email, password })
+      await register({ name, email, password })
       nav('/onboarding')
     } catch (ex) {
       setErr(ex.message)

@@ -7,6 +7,15 @@ For full local ML features, run backend/app.py locally.
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime, timezone
+import os
+try:
+    from supabase import create_client
+    SUPA_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL") or ""
+    SUPA_KEY = os.getenv("SUPABASE_SERVICE_KEY") or os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY") or ""
+    supa = create_client(SUPA_URL, SUPA_KEY) if SUPA_URL and SUPA_KEY else None
+except Exception as e:
+    supa = None
+    print("[supabase] not configured:", e)
 
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -229,7 +238,7 @@ def phone_poll():
     return jsonify({"pending": 0, "image": None})
 
 
-# --- User datas persisted to Vercel (in-memory mock + echo) ---
+# --- User datas persisted to Vercel + Supabase 24/7 ---
 USERS_STORE = []
 
 @app.route("/api/users", methods=["GET", "POST"])
@@ -237,19 +246,50 @@ def users_api():
     global USERS_STORE
     if request.method == "POST":
         data = request.get_json(force=True, silent=True) or {}
-        # support both {users:[...]} and single user
+        # try Supabase first
+        if supa:
+            try:
+                if "users" in data and isinstance(data["users"], list):
+                    for u in data["users"]:
+                        supa.table("user_datas").upsert({"email": u.get("email"), "name": u.get("name"), "data": u}).execute()
+                    USERS_STORE = data["users"]
+                elif "email" in data:
+                    supa.table("user_datas").upsert({"email": data.get("email"), "name": data.get("name"), "data": data}).execute()
+                    USERS_STORE.append(data)
+                # fetch back
+                res = supa.table("user_datas").select("*").execute()
+                users = [r["data"] for r in res.data] if res.data else USERS_STORE
+                return jsonify({"ok": True, "count": len(users), "users": users, "supabase": True})
+            except Exception as e:
+                print("supabase users error:", e)
+        # fallback in-memory
         if "users" in data and isinstance(data["users"], list):
             USERS_STORE = data["users"]
         elif "email" in data:
             USERS_STORE.append(data)
-        return jsonify({"ok": True, "count": len(USERS_STORE), "users": USERS_STORE})
-    return jsonify({"users": USERS_STORE, "count": len(USERS_STORE)})
+        return jsonify({"ok": True, "count": len(USERS_STORE), "users": USERS_STORE, "supabase": False})
+    # GET
+    if supa:
+        try:
+            res = supa.table("user_datas").select("*").execute()
+            users = [r["data"] for r in res.data] if res.data else []
+            return jsonify({"users": users, "count": len(users), "supabase": True})
+        except Exception as e:
+            print("supabase get users error:", e)
+    return jsonify({"users": USERS_STORE, "count": len(USERS_STORE), "supabase": False})
 
 @app.route("/api/auth", methods=["POST"])
 def auth_api():
     data = request.get_json(force=True, silent=True) or {}
-    # echo back for Vercel logs
-    return jsonify({"ok": True, "received": data, "time": datetime.now(timezone.utc).isoformat(), "note": "User data received on Vercel (mock persist)"})
+    if supa:
+        try:
+            # also store in supabase
+            user = data.get("user") or data
+            if user and user.get("email"):
+                supa.table("user_datas").upsert({"email": user.get("email"), "name": user.get("name"), "data": user}).execute()
+        except Exception as e:
+            print("supabase auth error:", e)
+    return jsonify({"ok": True, "received": data, "time": datetime.now(timezone.utc).isoformat(), "note": "User data received on Vercel + Supabase 24/7" if supa else "User data received on Vercel (mock, set SUPABASE_URL/KEY for 24/7)"})
 
 # Catch-all for /api and /api/ to show available endpoints
 @app.route("/api/")
