@@ -8,11 +8,13 @@ import {
   X, ChevronDown, FileText, LayoutDashboard, Cctv, Scissors, Apple, Milk,
 } from 'lucide-react'
 import { DEPARTMENTS, SITE_SEARCH } from '../../lib/data'
+import { useAuth } from '../../context/AuthContext'
 
 const ICONS = { Activity, Monitor, Stethoscope, Pill, Syringe, Baby, Heart, Shield, HeartPulse, Gauge, User, Droplets, Ribbon, Cctv, Scissors, Apple, Milk }
 
 // Desktop megamenu with hover panels + mobile accordion
 export default function Megamenu() {
+  const { user, logout, isAuthenticated } = useAuth()
   const [open, setOpen] = useState(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -155,6 +157,20 @@ useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 30))
               <Search size={16} />
             </button>
             <Link to="/recommend" className="btn btn-primary btn-sm">Try It</Link>
+            {!isAuthenticated ? (
+              <>
+                <Link to="/login" className="nav-link" style={{ marginLeft: 6 }}>Login</Link>
+                <Link to="/register" className="btn btn-ghost btn-sm" style={{ padding: '8px 14px' }}>Sign In</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/mr-hari" className="nav-link" title="Mr.Hari Folder" style={{ background: '#000', border: '1px solid rgba(255,255,255,0.12)' }}>Mr.Hari</Link>
+                <Link to="/account" className="nav-link" style={{ padding: 0, overflow: 'hidden', borderRadius: '50%', width: 36, height: 36, display: 'grid', placeItems: 'center', background: '#0F172A', border: '1px solid rgba(167,139,250,0.4)' }}>
+                  {user?.profilePic || localStorage.getItem('cn_dss_profile_pic') ? <img src={user?.profilePic || localStorage.getItem('cn_dss_profile_pic')} alt="profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={18} />}
+                </Link>
+                <button onClick={logout} className="nav-link" style={{ color: '#94A3B8' }}><X size={14} /></button>
+              </>
+            )}
           </div>
 
           {/* Mobile */}
@@ -187,6 +203,19 @@ useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 30))
                   ))}
             </div>
           ))}
+          <div className="mobile-group-title">Account</div>
+          {!isAuthenticated ? (
+            <>
+              <Link to="/login" className="mobile-link small">Login</Link>
+              <Link to="/register" className="mobile-link small">Sign In / Register</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/mr-hari" className="mobile-link small">Mr.Hari Folder</Link>
+              <Link to="/account" className="mobile-link small">Account Settings</Link>
+              <button onClick={logout} className="mobile-link small" style={{ background: 'none', border: 'none', textAlign: 'left', width: '100%', color: '#94A3B8' }}>Logout</button>
+            </>
+          )}
         </div>
       )}
 

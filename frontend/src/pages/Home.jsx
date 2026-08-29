@@ -63,7 +63,7 @@ export default function Home() {
   useEffect(() => { api.overview().then(setOverview).catch(() => setOverview(null)) }, [])
   useEffect(() => { api.datasets().then((r) => setDatasetCount(r.datasets?.length ?? null)).catch(() => {}) }, [])
   useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 3800)
+    const t = setTimeout(() => setIsLoading(false), 2200)
     return () => clearTimeout(t)
   }, [])
 
@@ -86,71 +86,58 @@ export default function Home() {
   const pipeY = useTransform(pipeProg, [0, 0.12], [46, 0])
 
   return (
-    <div style={{ position: 'relative' }}>
-      {/* ==== Page loader — 3.8s ensures Spline is visible directly when content appears ==== */}
+    <div style={{ position: 'relative', background: '#050508' }}>
+      {/* ==== Minimal loader — only LOADING ==== */}
       <AnimatePresence>
         {isLoading && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.4 }}
             style={{
               position: 'fixed',
               inset: 0,
               zIndex: 9999,
               display: 'flex',
-              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 18,
-              background: '#050508',
+              background: '#000000',
               pointerEvents: 'none',
             }}
           >
-            <div style={{ width: 44, height: 44, border: '3px solid rgba(96,165,250,0.18)', borderTopColor: '#A78BFA', borderRadius: '50%', animation: 'spin 0.9s linear infinite' }} />
-            <div style={{ fontSize: 12, letterSpacing: 2.4, color: 'rgba(255,255,255,0.72)', fontWeight: 600 }}>LOADING 3D</div>
-            <div style={{ width: 120, height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden' }}>
-              <motion.div initial={{ x: '-100%' }} animate={{ x: '0%' }} transition={{ duration: 3.6, ease: [0.16, 1, 0.3, 1] }} style={{ width: '100%', height: '100%', background: 'linear-gradient(90deg, #6B7CFF, #A78BFA)' }} />
-            </div>
+            <div style={{ fontSize: 22, letterSpacing: 8, color: '#fff', fontWeight: 800, fontFamily: 'Sora, sans-serif' }}>LOADING</div>
           </motion.div>
         )}
       </AnimatePresence>
-      {/* ==== Full-page Spline — even bigger, ball centered on right, covers display, no left blur ==== */}
-      <motion.div
-        className="hero-3d-bg"
-        style={{
-          scale: hero3DScale,
-          opacity: hero3DFade,
-          position: 'fixed',
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: 'none',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Spline even bigger — covers all screen, leaves edges, ball centered right */}
+      {/* ==== Hero Spline — absolute inside hero only (fixes hanging), ball on right ==== */}
+
+      {/* ==== Hero — content over Spline (absolute, not fixed — fixes hanging) ==== */}
+      <section className="home-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', background: '#050508' }}>
         <div
+          className="hero-3d-bg"
           style={{
             position: 'absolute',
-            right: '-14%',
-            top: '50%',
-            width: '92%',
-            height: '168%',
-            minWidth: 720,
-            minHeight: 900,
-            transform: 'translateY(-48%) scale(1.14)',
-            transformOrigin: 'center right',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: 'none',
+            overflow: 'hidden',
           }}
         >
-          <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} />
+          <div
+            style={{
+              position: 'absolute',
+              right: '-12%',
+              top: '50%',
+              width: '82%',
+              height: '140%',
+              minWidth: 560,
+              transform: 'translateY(-48%)',
+              transformOrigin: 'center right',
+            }}
+          >
+            <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} />
+          </div>
         </div>
-      </motion.div>
-
-      {/* ==== Hero — content over fixed Spline ==== */}
-      <section className="home-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
         <motion.div className="hero-shade" style={{ opacity: heroFade, position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }} />
 
         <div className="container hero-content">
