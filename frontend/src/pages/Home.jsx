@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   ArrowRight, Activity, Building2, Pill, ScanLine, Sparkles,
   HeartPulse, Boxes, Database, LayoutDashboard, TrendingUp,
@@ -56,11 +56,16 @@ const DEPT_CAROUSEL = DEPARTMENTS.map((d) => ({
 export default function Home() {
   const [overview, setOverview] = useState(null)
   const [datasetCount, setDatasetCount] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
   const gridRef = useRef(null)
   const pipeRef = useRef(null)
   const navigate = useNavigate()
   useEffect(() => { api.overview().then(setOverview).catch(() => setOverview(null)) }, [])
   useEffect(() => { api.datasets().then((r) => setDatasetCount(r.datasets?.length ?? null)).catch(() => {}) }, [])
+  useEffect(() => {
+    const t = setTimeout(() => setIsLoading(false), 3800)
+    return () => clearTimeout(t)
+  }, [])
 
   // God-like hero scroll: layers drift, zoom & fade at different rates
   const { scrollY } = useScroll()
@@ -82,6 +87,34 @@ export default function Home() {
 
   return (
     <div style={{ position: 'relative' }}>
+      {/* ==== Page loader — 3.8s ensures Spline is visible directly when content appears ==== */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9999,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 18,
+              background: '#050508',
+              pointerEvents: 'none',
+            }}
+          >
+            <div style={{ width: 44, height: 44, border: '3px solid rgba(96,165,250,0.18)', borderTopColor: '#A78BFA', borderRadius: '50%', animation: 'spin 0.9s linear infinite' }} />
+            <div style={{ fontSize: 12, letterSpacing: 2.4, color: 'rgba(255,255,255,0.72)', fontWeight: 600 }}>LOADING 3D</div>
+            <div style={{ width: 120, height: 2, background: 'rgba(255,255,255,0.08)', borderRadius: 999, overflow: 'hidden' }}>
+              <motion.div initial={{ x: '-100%' }} animate={{ x: '0%' }} transition={{ duration: 3.6, ease: [0.16, 1, 0.3, 1] }} style={{ width: '100%', height: '100%', background: 'linear-gradient(90deg, #6B7CFF, #A78BFA)' }} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* ==== Full-page Spline — even bigger, ball centered on right, covers display, no left blur ==== */}
       <motion.div
         className="hero-3d-bg"
@@ -95,17 +128,17 @@ export default function Home() {
           overflow: 'hidden',
         }}
       >
-        {/* Spline even bigger, leaves screen, ball in center-right */}
+        {/* Spline even bigger — covers all screen, leaves edges, ball centered right */}
         <div
           style={{
             position: 'absolute',
-            right: '-18%',
+            right: '-14%',
             top: '50%',
-            width: '82%',
-            height: '148%',
-            minWidth: 640,
-            minHeight: 800,
-            transform: 'translateY(-46%) scale(1.18)',
+            width: '92%',
+            height: '168%',
+            minWidth: 720,
+            minHeight: 900,
+            transform: 'translateY(-48%) scale(1.14)',
             transformOrigin: 'center right',
             display: 'flex',
             alignItems: 'center',
