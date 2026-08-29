@@ -244,11 +244,67 @@ def assessment():
 @app.route("/api/department-plan", methods=["POST"])
 def department_plan():
     data = request.get_json(force=True, silent=True) or {}
+    dept = (data.get("dept_slug") or data.get("department") or "icu").lower()
+    name = data.get("Name") or "Patient"
+    # Build realistic mock that matches frontend/src/components/PatientIVPanel.jsx expectations
+    patient = {
+        "name": name,
+        "age": data.get("Age") or 40,
+        "gender": data.get("Gender") or "M",
+        "weight_kg": data.get("Weight") or 65,
+        "height_cm": data.get("Height") or 165,
+        "diagnosis": data.get("Diagnosis") or "—",
+        "severity": data.get("Severity") or "Medium",
+        "allergies": data.get("Allergies") or "None",
+        "medications": data.get("Medications") or "None",
+    }
+    # Targets per dept
+    dept_profiles = {
+        "icu": {"calories_kcal": 1850, "protein": "1.2-1.5 g/kg", "fluid_ml_per_day": "30 ml/kg", "route": "Enteral preferred (early EN within 24-48h)", "note": "Resuscitation-grade monitoring"},
+        "eicu": {"calories_kcal": 1850, "protein": "1.2-1.5 g/kg", "fluid_ml_per_day": "30 ml/kg", "route": "Enteral preferred; tele-ICU protocol", "note": "Automated calorie tracking"},
+        "sicu": {"calories_kcal": 1950, "protein": "1.5-2.0 g/kg", "fluid_ml_per_day": "30 ml/kg", "route": "Early oral/EN post-op; immunonutrition", "note": "Watch ileus, leak, fistulas"},
+        "micu": {"calories_kcal": 1900, "protein": "1.2-1.5 g/kg", "fluid_ml_per_day": "30 ml/kg", "route": "Organ-specific formulas", "note": "Adjust for DKA, hepatic, AKI"},
+        "ticu": {"calories_kcal": 2100, "protein": "1.5-2.5 g/kg", "fluid_ml_per_day": "30 ml/kg", "route": "High-protein high-energy EN", "note": "Hypermetabolic; monitor hyperglycemia"},
+        "cicu": {"calories_kcal": 1750, "protein": "1.2-1.5 g/kg", "fluid_ml_per_day": "25 ml/kg (restricted)", "route": "Sodium/fluid restriction", "note": "Fluid overload risk; daily weights"},
+        "ot": {"calories_kcal": 1850, "protein": "1.2-1.5 g/kg", "fluid_ml_per_day": "30 ml/kg", "route": "ERAS: clear carbs 2h pre-op", "note": "Pre-op SGA screen"},
+        "pediatric": {"calories_kcal": 1400, "protein": "1.0-1.5 g/kg", "fluid_ml_per_day": "Holliday-Segar", "route": "Breastfeeding/complementary feeding", "note": "Growth monitoring"},
+        "pregnancy": {"calories_kcal": 2200, "protein": "+25 g/day", "fluid_ml_per_day": "2.5 L/day", "route": "GWG tracking; lactation +500 kcal", "note": "Lactation support"},
+        "nicu": {"calories_kcal": 120, "protein": "2.5-3.5 g/kg", "fluid_ml_per_day": "Holliday-Segar", "route": "Human milk + fortifier", "note": "NEC risk"},
+        "nephrology": {"calories_kcal": 1800, "protein": "1.2 g/kg (dialysis)", "fluid_ml_per_day": "500 ml + urine", "route": "Renal formulas", "note": "Restrict K/PO4"},
+        "oncology": {"calories_kcal": 1900, "protein": "1.2-2.0 g/kg", "fluid_ml_per_day": "30 ml/kg", "route": "High-protein energy-dense", "note": "Mucositis diets"},
+        "diabetes": {"calories_kcal": 1800, "protein": "1.0-1.5 g/kg", "fluid_ml_per_day": "30 ml/kg", "route": "Carb counting with insulin", "note": "Monitor glucose"},
+        "geriatric": {"calories_kcal": 1700, "protein": "1.2-1.5 g/kg", "fluid_ml_per_day": "Holliday-Segar", "route": "IDDSI dysphagia diets", "note": "Hyponatremia risk"},
+    }
+    targets = dept_profiles.get(dept, dept_profiles["icu"])
+    # Fluids
+    fluids = [
+        {"name": "0.9% Normal Saline (NS)", "role": "Primary", "rate": "25-30 ml/kg/day", "na": "154 mEq/L", "k": "0", "reason": f"Standard for {dept.upper()}", "cautions": "Hypernatremia, fluid overload"},
+        {"name": "Ringer's Lactate (RL)", "role": "Rescue / bolus", "rate": "Bolus 10-20 ml/kg over 15-30 min", "na": "130 mEq/L", "k": "4 mEq/L", "reason": "Resuscitation fluid for hypovolemia", "cautions": "Lactate clearance in liver failure"},
+    ]
+    # Additives
+    adds = []
+    try:
+        k = float(data.get("potassium")) if data.get("potassium") not in (None, "") else None
+        if k is not None and k < 3.5:
+            adds.append({"name": "Potassium Chloride (KCl) 20-40 mEq IV", "reason": f"Hypokalemia (K={k})", "combination": "Max 10-20 mEq/h peripheral", "caution": "Never IV push; monitor K"})
+    except: pass
+    try:
+        mg = float(data.get("magnesium")) if data.get("magnesium") not in (None, "") else None
+        if mg is not None and mg < 1.7:
+            adds.append({"name": "Magnesium Sulfate 2-4g IV", "reason": f"Hypomagnesemia (Mg={mg})", "combination": "With NS/D5W over 2-4h", "caution": "Respiratory depression"})
+    except: pass
+    if not adds:
+        adds.append({"name": "No IV additives indicated", "reason": "Electrolytes within target ranges", "combination": "—", "caution": "Recheck electrolytes daily"})
     return jsonify({
-        "department": data.get("department", "ICU"),
-        "plan": "Mock department plan — full logic in backend/services/department_plan_service.py",
-        "targets": {"calories_kcal": 1800, "protein_g": 85},
-        "iv_fluids": [{"name": "NS 0.9%", "rate": "80 ml/hr"}],
+        "department": dept,
+        "department_name": data.get("dept_name") or dept.upper(),
+        "patient": patient,
+        "targets": targets,
+        "fluids": fluids,
+        "additives": adds,
+        "warnings": ["Refeeding syndrome risk — monitor K, Mg, PO4"] if dept in ("icu","sicu","ticu") else ["Monitor electrolytes"],
+        "monitoring": ["Daily weight & fluid balance", "Urine output hourly", "Daily electrolytes", "Blood glucose 4-6 hourly"],
+        "engine": "mock-vercel",
     })
 
 

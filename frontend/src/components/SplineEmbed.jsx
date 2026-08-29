@@ -55,6 +55,41 @@ function SplineViewer({ scene, style, className }) {
     let cancelled = false
     let viewer = null
     let timeout = null
+    let contextLostHandler = null
+
+    // Detect WebGL support early — if no WebGL or --no-sandbox with GPU disabled, fallback immediately to dark (not white)
+    const hasWebGL = (() => {
+      try {
+        const c = document.createElement('canvas')
+        return !!(c.getContext('webgl') || c.getContext('webgl2'))
+      } catch { return false }
+    })()
+    if (!hasWebGL) {
+      setStatus('fallback')
+      return
+    }
+
+    // If WebGPU OOM, fallback to dark gradient — never show white
+    const onWindowError = (e) => {
+      const msg = (e.message || '') + (e.error?.message || '') + (e.reason?.message || '')
+      if (msg.includes('WebGPU') || msg.includes('GPUOutOfMemory') || msg.includes('CreateTexture') || msg.includes('Context lost') || msg.includes('OutOfMemory') || msg.includes('WebGL')) {
+        if (!cancelled) {
+          setStatus('fallback')
+          try { viewer?.remove() } catch {}
+        }
+      }
+    }
+    window.addEventListener('error', onWindowError)
+    window.addEventListener('unhandledrejection', onWindowError)
+    const onContextLost = (e) => {
+      e.preventDefault()
+      if (!cancelled) {
+        setStatus('fallback')
+        try { viewer?.remove() } catch {}
+      }
+    }
+    window.addEventListener('webglcontextlost', onContextLost)
+    window.addEventListener('webglcontextlost', onContextLost, true)
 
     const loadViewerScript = () => {
       if (customElements.get('spline-viewer')) return Promise.resolve(true)
@@ -70,6 +105,8 @@ function SplineViewer({ scene, style, className }) {
 
     const attachViewer = (url, isFallback = false) => {
       if (cancelled || !mountRef.current) return
+      // Force WebGL to avoid WebGPU OOM on low-end / --no-sandbox
+      try { if (navigator.gpu) navigator.gpu = undefined } catch {}
       viewer = document.createElement('spline-viewer')
       viewer.url = url
       viewer.style.width = '100%'
@@ -77,6 +114,11 @@ function SplineViewer({ scene, style, className }) {
       viewer.style.display = 'block'
       viewer.style.background = 'transparent'
       viewer.setAttribute('loading-anim-type', 'spinner-small-dark')
+      // Try to force low-power / webgl if viewer supports it + reduce DPR to prevent OOM
+      try { viewer.setAttribute('events-target', 'global') } catch {}
+      try { viewer.setAttribute('render-mode', 'webgl') } catch {}
+      try { viewer.setAttribute('pixel-ratio', '1') } catch {}
+      try { viewer.setAttribute('render-scale', '0.85') } catch {}
 
       const onLoad = () => {
         if (cancelled) return
@@ -109,6 +151,24 @@ function SplineViewer({ scene, style, className }) {
       viewer.style.transition = 'opacity 0.6s ease'
       mountRef.current.innerHTML = ''
       mountRef.current.appendChild(viewer)
+
+      // Attach webglcontextlost listener to canvas when it appears
+      const attachContextLost = () => {
+        const cvs = viewer.shadowRoot?.querySelector('canvas') || mountRef.current?.querySelector('canvas')
+        if (cvs && !cvs._hasListener) {
+          cvs._hasListener = true
+          cvs.addEventListener('webglcontextlost', (e) => {
+            e.preventDefault()
+            if (!cancelled) {
+              setStatus('fallback')
+              try { viewer.remove() } catch {}
+            }
+          })
+        }
+      }
+      // Poll for canvas for a short time to attach listener
+      let canvasPoll = setInterval(attachContextLost, 500)
+      setTimeout(() => clearInterval(canvasPoll), 5000)
 
       // If no canvas after 4s, treat as failure
       timeout = setTimeout(() => {
@@ -154,6 +214,13 @@ function SplineViewer({ scene, style, className }) {
     return () => {
       cancelled = true
       clearTimeout(timeout)
+      window.removeEventListener('error', onWindowError)
+      window.removeEventListener('unhandledrejection', onWindowError)
+      window.removeEventListener('webglcontextlost', onContextLost)
+      window.removeEventListener('webglcontextlost', onContextLost, true)
+      if (contextLostHandler && viewer) {
+        try { viewer.removeEventListener('webglcontextlost', contextLostHandler) } catch {}
+      }
       if (viewer?.parentNode) viewer.parentNode.removeChild(viewer)
     }
   }, [primaryUrl, triedFallback])

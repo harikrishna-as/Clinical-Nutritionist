@@ -375,11 +375,11 @@ export default function PatientIVPanel({ dept }) {
                   <h4>Nutrition Targets</h4>
                   <table className="iv-targets">
                     <tbody>
-                      <tr><td>Calories</td><td><strong>{result.targets.calories_kcal} kcal/day</strong></td></tr>
-                      <tr><td>Protein</td><td><strong>{result.targets.protein}</strong></td></tr>
-                      <tr><td>Fluids</td><td><strong>{result.targets.fluid_ml_per_day}</strong></td></tr>
-                      <tr><td>Feeding route</td><td>{result.targets.route}</td></tr>
-                      <tr><td>Note</td><td>{result.targets.note}</td></tr>
+                      <tr><td>Calories</td><td><strong>{result.targets?.calories_kcal ?? '—'} kcal/day</strong></td></tr>
+                      <tr><td>Protein</td><td><strong>{result.targets?.protein ?? '—'}</strong></td></tr>
+                      <tr><td>Fluids</td><td><strong>{result.targets?.fluid_ml_per_day ?? '—'}</strong></td></tr>
+                      <tr><td>Feeding route</td><td>{result.targets?.route ?? '—'}</td></tr>
+                      <tr><td>Note</td><td>{result.targets?.note ?? '—'}</td></tr>
                     </tbody>
                   </table>
 
@@ -389,7 +389,7 @@ export default function PatientIVPanel({ dept }) {
                       <tr><th>Fluid</th><th>Role</th><th>Rate</th><th>Na/K</th><th>Caution</th></tr>
                     </thead>
                     <tbody>
-                      {result.fluids.map((f, i) => (
+                      {(result.fluids || []).map((f, i) => (
                         <tr key={i}>
                           <td><strong>{f.name}</strong><br /><span className="iv-reason">{f.reason}</span></td>
                           <td>{f.role}</td>
@@ -402,7 +402,7 @@ export default function PatientIVPanel({ dept }) {
                   </table>
 
                   <h4>IV Additives / Electrolytes</h4>
-                  {result.additives.map((a, i) => (
+                  {(result.additives || []).map((a, i) => (
                     <div key={i} className="iv-additive">
                       <strong>{a.name}</strong>
                       <p>{a.reason}</p>
@@ -413,12 +413,12 @@ export default function PatientIVPanel({ dept }) {
 
                   <h4>Warnings</h4>
                   <ul className="iv-warnings">
-                    {result.warnings.map((w, i) => <li key={i}><AlertTriangle size={13} /> {w}</li>)}
+                    {(result.warnings || []).map((w, i) => <li key={i}><AlertTriangle size={13} /> {w}</li>)}
                   </ul>
 
                   <h4>Monitoring</h4>
                   <ul className="iv-monitor">
-                    {result.monitoring.map((m, i) => <li key={i}>{m}</li>)}
+                    {(result.monitoring || []).map((m, i) => <li key={i}>{m}</li>)}
                   </ul>
 
                   <div className="report-footer">

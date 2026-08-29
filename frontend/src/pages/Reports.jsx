@@ -138,7 +138,7 @@ export default function Reports() {
                   <p>{report.summary}</p>
 
                   <h4>Dietary Plan</h4>
-                  <ol>{report.plan.map((p, i) => <li key={i}>{p}</li>)}</ol>
+                  <ol>{(report.plan || []).map((p, i) => <li key={i}>{p}</li>)}</ol>
 
                   {report.recommended_foods?.length > 0 && (
                     <>
@@ -160,7 +160,7 @@ export default function Reports() {
 
                   <h4>Lab Follow-up</h4>
                   <div className="report-tags">
-                    {report.labs.map((l) => <span key={l}>{l}</span>)}
+                    {(report.labs || []).map((l) => <span key={l}>{l}</span>)}
                   </div>
 
                   <div className="report-footer">
