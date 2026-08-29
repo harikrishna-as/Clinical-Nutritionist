@@ -89,26 +89,26 @@ export default function MedicineSearch() {
       <section className="page-body">
         <div className="container">
           {stats && (
-            <div className="cards-grid" style={{ marginBottom: 28 }}>
-              <div className="card stat-card">
+            <div className="cards-grid" style={{ marginBottom: 28, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
+              <div className="card stat-card" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
                 <Stethoscope size={22} color="#60A5FA" />
                 <div>
-                  <div className="stat-num">{stats.total.toLocaleString()}</div>
-                  <div className="stat-label">Total Medicines</div>
+                  <div className="stat-num" style={{ fontSize: 22, fontWeight: 800 }}>{(stats.total ?? 0).toLocaleString()}</div>
+                  <div className="stat-label" style={{ color: '#94A3B8', fontSize: 12 }}>Total Medicines</div>
                 </div>
               </div>
-              <div className="card stat-card">
+              <div className="card stat-card" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
                 <Activity size={22} color="#22c55e" />
                 <div>
-                  <div className="stat-num">{stats.active.toLocaleString()}</div>
-                  <div className="stat-label">Active</div>
+                  <div className="stat-num" style={{ fontSize: 22, fontWeight: 800 }}>{(stats.active ?? 0).toLocaleString()}</div>
+                  <div className="stat-label" style={{ color: '#94A3B8', fontSize: 12 }}>Active</div>
                 </div>
               </div>
-              <div className="card stat-card">
+              <div className="card stat-card" style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
                 <AlertCircle size={22} color="#ef4444" />
                 <div>
-                  <div className="stat-num">{stats.discontinued.toLocaleString()}</div>
-                  <div className="stat-label">Discontinued</div>
+                  <div className="stat-num" style={{ fontSize: 22, fontWeight: 800 }}>{(stats.discontinued ?? 0).toLocaleString()}</div>
+                  <div className="stat-label" style={{ color: '#94A3B8', fontSize: 12 }}>Discontinued</div>
                 </div>
               </div>
             </div>

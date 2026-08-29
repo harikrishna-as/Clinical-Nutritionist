@@ -150,15 +150,24 @@ def department_plan():
 def medicines_search():
     q = request.args.get("q", "")
     limit = request.args.get("limit", 30, type=int)
-    return jsonify({"query": q, "count": 2, "results": [
-        {"id": "1", "name": "Paracetamol", "composition": "Paracetamol 500mg", "manufacturer": "Mock Labs", "price": "₹20"},
-        {"id": "2", "name": "MockMed", "composition": "Mock 250mg", "manufacturer": "Mock Pharma", "price": "₹35"},
-    ][:limit]})
+    mock_results = [
+        {"id": "1", "name": "Paracetamol", "short_composition1": "Paracetamol 500mg", "short_composition2": "", "manufacturer_name": "Mock Labs", "pack_size_label": "10 tablets", "price(₹)": "20", "Is_discontinued": "FALSE"},
+        {"id": "2", "name": "Amoxycillin", "short_composition1": "Amoxycillin 500mg", "short_composition2": "", "manufacturer_name": "Mock Pharma", "pack_size_label": "10 capsules", "price(₹)": "35", "Is_discontinued": "FALSE"},
+        {"id": "3", "name": "Metformin", "short_composition1": "Metformin 500mg", "short_composition2": "", "manufacturer_name": "Glaxo", "pack_size_label": "15 tablets", "price(₹)": "28", "Is_discontinued": "FALSE"},
+        {"id": "4", "name": "Azithromycin", "short_composition1": "Azithromycin 250mg", "short_composition2": "", "manufacturer_name": "Cipla", "pack_size_label": "6 tablets", "price(₹)": "45", "Is_discontinued": "FALSE"},
+    ]
+    # filter by query
+    if q:
+        ql = q.lower()
+        filtered = [r for r in mock_results if ql in r["name"].lower() or ql in r["short_composition1"].lower() or ql in r["manufacturer_name"].lower()]
+    else:
+        filtered = []
+    return jsonify({"query": q, "count": len(filtered), "results": filtered[:limit]})
 
 
 @app.route("/api/medicines/stats")
 def medicines_stats():
-    return jsonify({"total": 250000, "note": "Mock stats — full DB is Old datasets/archive/A_Z_medicines_dataset_of_India.csv locally"})
+    return jsonify({"total": 253000, "active": 210000, "discontinued": 43000, "note": "Mock stats — full DB is Old datasets/archive/A_Z_medicines_dataset_of_India.csv locally"})
 
 
 @app.route("/api/medicines/<med_id>")
