@@ -63,7 +63,7 @@ export default function Home() {
   useEffect(() => { api.overview().then(setOverview).catch(() => setOverview(null)) }, [])
   useEffect(() => { api.datasets().then((r) => setDatasetCount(r.datasets?.length ?? null)).catch(() => {}) }, [])
   useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 2200)
+    const t = setTimeout(() => setIsLoading(false), 3600)
     return () => clearTimeout(t)
   }, [])
 
@@ -109,30 +109,31 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* ==== Hero Spline — absolute inside hero only (fixes hanging), ball on right ==== */}
+      {/* ==== Hero Spline — FULL SCREEN, ball centered right, covers all viewport ==== */}
 
-      {/* ==== Hero — content over Spline (absolute, not fixed — fixes hanging) ==== */}
-      <section className="home-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', background: '#050508' }}>
+      {/* ==== Hero — Spline FULL SCREEN fixed background, ball on right ==== */}
+      <section className="home-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', background: 'transparent' }}>
         <div
           className="hero-3d-bg"
           style={{
-            position: 'absolute',
+            position: 'fixed',
             inset: 0,
             zIndex: 0,
             pointerEvents: 'none',
             overflow: 'hidden',
+            background: '#050508',
           }}
         >
           <div
             style={{
               position: 'absolute',
-              right: '-6%',
+              right: '-18%',
               top: '50%',
-              width: '62%',
-              height: '108%',
-              minWidth: 480,
-              maxWidth: 780,
-              transform: 'translateY(-50%)',
+              width: '92%',
+              height: '168%',
+              minWidth: 720,
+              minHeight: 900,
+              transform: 'translateY(-48%)',
               transformOrigin: 'center right',
             }}
           >
