@@ -67,12 +67,10 @@ export default function Home() {
     return () => clearTimeout(t)
   }, [])
 
-  // God-like hero scroll: layers drift, zoom & fade at different rates
+  // Simplified hero scroll — no scale to prevent hanging/GPU OOM
   const { scrollY } = useScroll()
-  const heroY = useTransform(scrollY, [0, 800], [0, -180])
-  const heroFade = useTransform(scrollY, [0, 560], [1, 0])
-  const hero3DScale = useTransform(scrollY, [0, 800], [1, 1.2])
-  const hero3DFade = useTransform(scrollY, [0, 640], [0.95, 0.1])
+  const heroY = useTransform(scrollY, [0, 400], [0, -40])
+  const heroFade = useTransform(scrollY, [0, 400], [1, 0.85])
 
   // Quick-grid: 3D scroll-in tilt
   const gridProg = useScroll({ target: gridRef, offset: ['start end', 'center center'] }).scrollYProgress
@@ -87,13 +85,13 @@ export default function Home() {
 
   return (
     <div style={{ position: 'relative', background: '#050508' }}>
-      {/* ==== Minimal loader — only LOADING ==== */}
+      {/* ==== Minimal loader — only LOADING, no black block ==== */}
       <AnimatePresence>
         {isLoading && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5 }}
             style={{
               position: 'fixed',
               inset: 0,
@@ -101,11 +99,13 @@ export default function Home() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: '#000000',
+              background: 'rgba(5,5,8,0.72)',
+              backdropFilter: 'blur(6px)',
+              WebkitBackdropFilter: 'blur(6px)',
               pointerEvents: 'none',
             }}
           >
-            <div style={{ fontSize: 22, letterSpacing: 8, color: '#fff', fontWeight: 800, fontFamily: 'Sora, sans-serif' }}>LOADING</div>
+            <div style={{ fontSize: 20, letterSpacing: 10, color: '#fff', fontWeight: 800, fontFamily: 'Sora, sans-serif' }}>LOADING</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -126,12 +126,13 @@ export default function Home() {
           <div
             style={{
               position: 'absolute',
-              right: '-12%',
+              right: '-6%',
               top: '50%',
-              width: '82%',
-              height: '140%',
-              minWidth: 560,
-              transform: 'translateY(-48%)',
+              width: '62%',
+              height: '108%',
+              minWidth: 480,
+              maxWidth: 780,
+              transform: 'translateY(-50%)',
               transformOrigin: 'center right',
             }}
           >
