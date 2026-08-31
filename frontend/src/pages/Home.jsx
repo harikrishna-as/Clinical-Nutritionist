@@ -67,10 +67,11 @@ export default function Home() {
     return () => clearTimeout(t)
   }, [])
 
-  // Simplified hero scroll — no scale to prevent hanging/GPU OOM
+  // Hero scroll — content drifts, Spline grows and stops at Marquee
   const { scrollY } = useScroll()
   const heroY = useTransform(scrollY, [0, 400], [0, -40])
   const heroFade = useTransform(scrollY, [0, 400], [1, 0.85])
+  const heroSplineScale = useTransform(scrollY, [0, 600], [1, 1.22])
 
   // Quick-grid: 3D scroll-in tilt
   const gridProg = useScroll({ target: gridRef, offset: ['start end', 'center center'] }).scrollYProgress
@@ -111,35 +112,47 @@ export default function Home() {
       </AnimatePresence>
       {/* ==== Hero Spline — FULL SCREEN, ball centered right, covers all viewport ==== */}
 
-      {/* ==== Hero — Spline FULL SCREEN fixed background, ball on right ==== */}
-      <section className="home-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', background: 'transparent' }}>
-        <div
+      {/* ==== Hero — Spline slight left blur, stops at Marquee, grows on scroll ==== */}
+      <section className="home-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', background: '#050508' }}>
+        <motion.div
           className="hero-3d-bg"
           style={{
-            position: 'fixed',
+            position: 'absolute',
             inset: 0,
             zIndex: 0,
             pointerEvents: 'none',
             overflow: 'hidden',
-            background: '#050508',
+            scale: heroSplineScale,
           }}
         >
           <div
             style={{
               position: 'absolute',
-              right: '-18%',
+              right: '-12%',
               top: '50%',
-              width: '92%',
-              height: '168%',
-              minWidth: 720,
-              minHeight: 900,
-              transform: 'translateY(-48%)',
+              width: '88%',
+              height: '158%',
+              minWidth: 640,
+              transform: 'translateY(-50%)',
               transformOrigin: 'center right',
             }}
           >
             <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} />
           </div>
-        </div>
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: '42%',
+              background: 'linear-gradient(90deg, rgba(5,5,8,0.96) 0%, rgba(5,5,8,0.62) 38%, transparent 100%)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              pointerEvents: 'none',
+            }}
+          />
+        </motion.div>
         <motion.div className="hero-shade" style={{ opacity: heroFade, position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }} />
 
         <div className="container hero-content">

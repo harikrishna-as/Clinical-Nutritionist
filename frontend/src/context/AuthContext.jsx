@@ -9,20 +9,26 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Load local fallback first for instant UI
     const saved = localStorage.getItem('cn_dss_user')
     const all = localStorage.getItem('cn_dss_users')
     if (saved) try { setUser(JSON.parse(saved)) } catch {}
     if (all) try { setUsers(JSON.parse(all)) } catch {}
 
-    // If Supabase configured, sync session
     if (isSupabaseConfigured()) {
       supabase.auth.getSession().then(({ data }) => {
         if (data.session?.user) {
           const u = data.session.user
-          // fetch profile from profiles table
           supabase.from('profiles').select('*').eq('id', u.id).single().then(({ data: prof }) => {
-            const merged = { id: u.id, email: u.email, name: prof?.full_name || u.user_metadata?.full_name || u.email.split('@')[0], profilePic: prof?.avatar_url || null, supabase: true }
+            const merged = {
+              id: u.id,
+              email: u.email,
+              name: prof?.full_name || u.user_metadata?.full_name || u.email.split('@')[0],
+              username: prof?.username || (u.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_.]/g, '_')),
+              profilePic: prof?.avatar_url || null,
+              supabase: true,
+              created_at: prof?.created_at,
+              updated_at: prof?.updated_at,
+            }
             setUser(merged)
             localStorage.setItem('cn_dss_user', JSON.stringify(merged))
           })
@@ -31,11 +37,10 @@ export function AuthProvider({ children }) {
       const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
         if (session?.user) {
           const u = session.user
-          const merged = { id: u.id, email: u.email, name: u.user_metadata?.full_name || u.email.split('@')[0], profilePic: null, supabase: true }
-          setUser(merged)
+          // will be enriched on next getSession
+          const merged = { id: u.id, email: u.email, name: u.user_metadata?.full_name || u.email.split('@')[0], username: (u.email.split('@')[0].toLowerCase().replace(/[^a-z0-9_.]/g, '_')), profilePic: null, supabase: true }
+          setUser(prev => ({ ...merged, ...prev }))
           localStorage.setItem('cn_dss_user', JSON.stringify(merged))
-        } else {
-          // sign out
         }
       })
       setLoading(false)
@@ -48,10 +53,25 @@ export function AuthProvider({ children }) {
     setUsers(next)
     localStorage.setItem('cn_dss_users', JSON.stringify(next))
     fetch('/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ users: next }) }).catch(() => {})
-    // Also try Supabase if configured (best effort)
+  }
+
+  const normalizeUsername = (u) => (u || '').trim().toLowerCase()
+  const isValidUsername = (u) => /^[a-z0-9_.]{3,20}$/.test(u)
+
+  const checkUsernameAvailable = async (username, currentUserId = null) => {
+    const norm = normalizeUsername(username)
+    if (!isValidUsername(norm)) return { available: false, reason: 'Username must be 3-20 chars, letters, numbers, _ or .' }
+    // check local
+    const localExists = users.some((x) => normalizeUsername(x.username) === norm && x.id !== currentUserId)
+    if (localExists) return { available: false, reason: 'This username is already taken. Please choose another one.' }
     if (isSupabaseConfigured()) {
-      fetch('/api/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ users: next, supabase: true }) }).catch(() => {})
+      const { data, error } = await supabase.from('profiles').select('id').ilike('username', norm).limit(1)
+      if (!error && data && data.length > 0) {
+        const found = data[0]
+        if (found.id !== currentUserId) return { available: false, reason: 'This username is already taken. Please choose another one.' }
+      }
     }
+    return { available: true }
   }
 
   const login = async (email, password) => {
@@ -60,13 +80,12 @@ export function AuthProvider({ children }) {
       if (error) throw new Error(error.message)
       const u = data.user
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', u.id).single()
-      const merged = { id: u.id, email: u.email, name: prof?.full_name || u.user_metadata?.full_name || email.split('@')[0], profilePic: prof?.avatar_url || null, supabase: true }
+      const merged = { id: u.id, email: u.email, name: prof?.full_name || u.user_metadata?.full_name || email.split('@')[0], username: prof?.username || email.split('@')[0].toLowerCase().replace(/[^a-z0-9_.]/g, '_'), profilePic: prof?.avatar_url || null, supabase: true }
       setUser(merged)
       localStorage.setItem('cn_dss_user', JSON.stringify(merged))
       return merged
     }
-    // fallback local
-    const found = users.find((u) => u.email === email && u.password === password)
+    const found = users.find((u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password)
     if (!found) throw new Error('Invalid email or password')
     const withLogin = { ...found, lastLogin: new Date().toISOString() }
     setUser(withLogin)
@@ -74,29 +93,34 @@ export function AuthProvider({ children }) {
     return withLogin
   }
 
-  const register = async ({ name, email, password }) => {
+  const register = async ({ name, email, password, username }) => {
+    const normEmail = email.trim().toLowerCase()
+    const normUsername = normalizeUsername(username || name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_.]/g, '_').slice(0,20))
+    if (!isValidUsername(normUsername)) throw new Error('Username must be 3-20 chars, letters, numbers, _ or .')
+    const avail = await checkUsernameAvailable(normUsername)
+    if (!avail.available) throw new Error(avail.reason)
+    if (users.some((u) => u.email.toLowerCase() === normEmail)) throw new Error('Email already exists')
     if (isSupabaseConfigured()) {
-      const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name } } })
+      // check email exists via supabase? signUp will fail if exists
+      const { data, error } = await supabase.auth.signUp({ email: normEmail, password, options: { data: { full_name: name, username: normUsername } } })
       if (error) throw new Error(error.message)
-      // create profile row (best effort)
       if (data.user) {
         const pic = localStorage.getItem('cn_dss_profile_pic') || null
-        await supabase.from('profiles').insert({ id: data.user.id, full_name: name, avatar_url: pic }).then(() => {}, () => {})
-        const merged = { id: data.user.id, email, name, profilePic: pic, supabase: true }
-        // auto-login if session exists (email confirmation disabled) else still set local
+        // try to insert profile with username/email - will fail if duplicate due to DB unique
+        const { error: profErr } = await supabase.from('profiles').upsert({ id: data.user.id, full_name: name, username: normUsername, email: normEmail, avatar_url: pic }, { onConflict: 'id' })
+        if (profErr && profErr.message.includes('duplicate')) throw new Error('This username is already taken. Please choose another one.')
+        const merged = { id: data.user.id, email: normEmail, name, username: normUsername, profilePic: pic, supabase: true }
         if (data.session) {
           setUser(merged)
           localStorage.setItem('cn_dss_user', JSON.stringify(merged))
         } else {
-          // email confirmation required — still store pending
           localStorage.setItem('cn_dss_pending_user', JSON.stringify(merged))
         }
         return merged
       }
       throw new Error('Registration failed')
     }
-    if (users.find((u) => u.email === email)) throw new Error('User already exists')
-    const newUser = { id: Date.now().toString(), name, email, password, createdAt: new Date().toISOString(), profilePic: localStorage.getItem('cn_dss_profile_pic') || null }
+    const newUser = { id: Date.now().toString(), name, email: normEmail, username: normUsername, password, createdAt: new Date().toISOString(), profilePic: localStorage.getItem('cn_dss_profile_pic') || null }
     const next = [...users, newUser]
     persistUsersLocal(next)
     setUser(newUser)
@@ -106,30 +130,51 @@ export function AuthProvider({ children }) {
   }
 
   const logout = async () => {
-    if (isSupabaseConfigured()) {
-      await supabase.auth.signOut().catch(() => {})
-    }
+    if (isSupabaseConfigured()) await supabase.auth.signOut().catch(() => {})
     setUser(null)
     localStorage.removeItem('cn_dss_user')
   }
 
   const updateProfile = async (patch) => {
-    const next = { ...user, ...patch }
+    // patch may contain: { full_name, username, avatar_url } or { name, username, profilePic }
+    const username = patch.username !== undefined ? normalizeUsername(patch.username) : undefined
+    const full_name = patch.full_name ?? patch.name
+    const avatar_url = patch.avatar_url ?? patch.profilePic
+
+    if (username !== undefined) {
+      if (!isValidUsername(username)) throw new Error('Username must be 3-20 chars, letters, numbers, _ or .')
+      const avail = await checkUsernameAvailable(username, user?.id)
+      if (!avail.available) throw new Error(avail.reason)
+    }
+
+    const next = { ...user, ...(full_name !== undefined ? { name: full_name } : {}), ...(username !== undefined ? { username } : {}), ...(avatar_url !== undefined ? { profilePic: avatar_url } : {}), ...(patch.profilePic !== undefined ? { profilePic: patch.profilePic } : {}) }
     setUser(next)
     localStorage.setItem('cn_dss_user', JSON.stringify(next))
+
     if (isSupabaseConfigured() && user?.supabase) {
-      await supabase.from('profiles').update({ full_name: patch.name, avatar_url: patch.profilePic }).eq('id', user.id).then(() => {}, () => {})
+      const upd = {}
+      if (full_name !== undefined) upd.full_name = full_name
+      if (username !== undefined) upd.username = username
+      if (avatar_url !== undefined) upd.avatar_url = avatar_url
+      if (Object.keys(upd).length) {
+        const { error } = await supabase.from('profiles').update(upd).eq('id', user.id)
+        if (error) {
+          if (error.message.includes('duplicate') || error.code === '23505') throw new Error('This username is already taken. Please choose another one.')
+          throw new Error(error.message)
+        }
+      }
     } else {
-      const allNext = users.map((u) => (u.id === next.id ? next : u))
+      const allNext = users.map((u) => (u.id === next.id ? { ...u, name: next.name, username: next.username, profilePic: next.profilePic } : u))
       persistUsersLocal(allNext)
     }
+    if (avatar_url) localStorage.setItem('cn_dss_profile_pic', avatar_url)
     if (patch.profilePic) localStorage.setItem('cn_dss_profile_pic', patch.profilePic)
+    return next
   }
 
   const setProfilePic = async (dataUrl) => {
     localStorage.setItem('cn_dss_profile_pic', dataUrl)
     if (isSupabaseConfigured() && user?.supabase) {
-      // upload to Supabase Storage bucket 'avatars' if exists
       try {
         const blob = await (await fetch(dataUrl)).blob()
         const path = `${user.id}/avatar.jpg`
@@ -137,20 +182,16 @@ export function AuthProvider({ children }) {
         const { data } = supabase.storage.from('avatars').getPublicUrl(path)
         const publicUrl = data?.publicUrl
         if (publicUrl) {
-          await updateProfile({ profilePic: publicUrl })
+          await updateProfile({ avatar_url: publicUrl })
           return
         }
       } catch {}
     }
     if (user) await updateProfile({ profilePic: dataUrl })
-    else {
-      // not logged in yet — just store for next register
-      localStorage.setItem('cn_dss_profile_pic', dataUrl)
-    }
   }
 
   return (
-    <AuthContext.Provider value={{ user, users, login, register, logout, updateProfile, setProfilePic, isAuthenticated: !!user, loading, supabaseConfigured: isSupabaseConfigured() }}>
+    <AuthContext.Provider value={{ user, users, login, register, logout, updateProfile, setProfilePic, checkUsernameAvailable, isAuthenticated: !!user, loading, supabaseConfigured: isSupabaseConfigured() }}>
       {children}
     </AuthContext.Provider>
   )

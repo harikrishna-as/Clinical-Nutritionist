@@ -5,7 +5,7 @@ import Megamenu from './Megamenu'
 import Breadcrumbs from './Breadcrumbs'
 import Footer from './Footer'
 import ScrollProgress from '../animations/ScrollProgress'
-import CursorGlow from '../ui/CursorGlow'
+import GlobalCursor from '../GlobalCursor'
 
 export default function Layout() {
   const location = useLocation()
@@ -16,9 +16,9 @@ export default function Layout() {
   }, [location.pathname])
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
       <ScrollProgress />
-      <CursorGlow />
+      <GlobalCursor />
       <Megamenu />
       <main>
         <Breadcrumbs />

@@ -19,6 +19,7 @@ import KnowledgeGraphPage from './pages/KnowledgeGraphPage'
 import MedicineSearch from './pages/MedicineSearch'
 import TrainedModels from './pages/TrainedModels'
 import MrHari from './pages/MrHari'
+import ProfileSettings from './pages/ProfileSettings'
 import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import ForgotPassword from './pages/auth/ForgotPassword'
@@ -77,9 +78,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="/knowledge-graph" element={<KnowledgeGraphPage />} />
             <Route path="/medicines-search" element={<MedicineSearch />} />
             <Route path="/trained-models" element={<TrainedModels />} />
-            <Route path="/mr-hari" element={<RequireAuth><MrHari /></RequireAuth>} />
+            <Route path="/mr-hari" element={<MrHari />} />
+            <Route path="/profile-settings" element={<RequireAuth><ProfileSettings /></RequireAuth>} />
             <Route path="/account" element={<RequireAuth><AccountSettings /></RequireAuth>} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<MrHari />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
