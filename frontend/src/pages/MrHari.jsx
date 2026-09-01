@@ -1,83 +1,15 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import ProfilePicture from '../components/ProfilePicture'
+import MrHariAuth from './auth/MrHariAuth'
 
 export default function MrHari() {
-  const { user, isAuthenticated, login, register } = useAuth()
-  const nav = useNavigate()
-  const [mode, setMode] = useState('login') // login | register
-  const [name, setName] = useState('')
-  const [username, setUsername] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [err, setErr] = useState('')
+  const { user, isAuthenticated } = useAuth()
 
-  const handleLogin = async (e) => {
-    e.preventDefault()
-    setErr('')
-    try {
-      await login(email, password)
-    } catch (ex) {
-      setErr(ex.message)
-    }
-  }
-  const handleRegister = async (e) => {
-    e.preventDefault()
-    setErr('')
-    try {
-      await register({ name, email, password, username })
-      setErr('')
-    } catch (ex) {
-      setErr(ex.message)
-    }
-  }
-
-  // Not authenticated → show combined login/register inside black folder
+  // Not authenticated → show the exact Mr.Hari login from your HTML (now combined)
   if (!isAuthenticated) {
-    return (
-      <div className="page" style={{ background: '#000000', minHeight: '100vh' }}>
-        <section className="page-hero" style={{ background: '#000000', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-          <div className="container">
-            <h1 style={{ color: '#fff' }}>Mr.Hari <span className="gradient-text">Folder</span></h1>
-            <p style={{ color: '#94A3B8', maxWidth: 640 }}>Black folder — please login first to use values, texts and all features. Your profile and data stay private here.</p>
-          </div>
-        </section>
-        <section className="page-body">
-          <div className="container" style={{ display: 'grid', gap: 20, maxWidth: 900 }}>
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-              <button onClick={() => setMode('login')} className={`btn ${mode === 'login' ? 'btn-primary' : 'btn-ghost'} btn-sm`}>Login</button>
-              <button onClick={() => setMode('register')} className={`btn ${mode === 'register' ? 'btn-primary' : 'btn-ghost'} btn-sm`}>Sign In / Register</button>
-            </div>
-
-            <div className="card" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)', maxWidth: 520, margin: '0 auto', width: '100%' }}>
-              <h3 style={{ textAlign: 'center' }}>{mode === 'login' ? 'Login to Mr.Hari' : 'Create Account'}</h3>
-              <p style={{ color: '#94A3B8', fontSize: 13, textAlign: 'center', marginBottom: 12 }}>Home appears first, but putting any value requires login.</p>
-              <form onSubmit={mode === 'login' ? handleLogin : handleRegister} style={{ display: 'grid', gap: 12 }}>
-                {mode === 'register' && (
-                  <>
-                    <input placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} required style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,0.3)', background: 'rgba(13,5,36,0.8)', color: '#fff' }} />
-                    <input placeholder="Username (unique, 3-20, letters/numbers/_/.)" value={username} onChange={(e) => setUsername(e.target.value.toLowerCase())} required style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,0.3)', background: 'rgba(13,5,36,0.8)', color: '#fff' }} />
-                  </>
-                )}
-                <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,0.3)', background: 'rgba(13,5,36,0.8)', color: '#fff' }} />
-                <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,0.3)', background: 'rgba(13,5,36,0.8)', color: '#fff' }} />
-                {err && <div style={{ color: '#F87171', fontSize: 13 }}>{err}</div>}
-                <button type="submit" className="btn btn-primary" style={{ justifyContent: 'center' }}>{mode === 'login' ? 'Login' : 'Register'}</button>
-              </form>
-              <div style={{ marginTop: 12, fontSize: 12, color: '#64748B', textAlign: 'center' }}>
-                Email is unique and read-only after. Username must be unique (case-insensitive).
-              </div>
-            </div>
-
-            <div className="card" style={{ background: '#000000', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
-              <p style={{ color: '#64748B', fontSize: 13 }}>Profile picture can be added after login — upload or take photo, preview, then save.</p>
-              <div style={{ opacity: 0.5, pointerEvents: 'none' }}><ProfilePicture size={100} /></div>
-            </div>
-          </div>
-        </section>
-      </div>
-    )
+    return <MrHariAuth initialMode="login" />
   }
 
   // Authenticated → show black folder with profile
