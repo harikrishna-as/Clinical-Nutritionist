@@ -1,0 +1,363 @@
+{
+  "title": "Clinical Nutrition AI - Model Evaluation Report",
+  "sections": {
+    "Regression": {
+      "description": "Unit 2: Calorie & Nutrient Requirement Prediction",
+      "models": [
+        {
+          "model": "Linear Regression",
+          "type": "regression",
+          "R-Squared": -0.03885024761889344,
+          "MSE": 3008182.869393521,
+          "RMSE": 1734.4113898938513,
+          "MAE": 1314.6784308313813
+        },
+        {
+          "model": "Multiple Linear Regression",
+          "type": "regression",
+          "R-Squared": 0.7719538880698169,
+          "MSE": 660349.6595515448,
+          "RMSE": 812.61901254619,
+          "MAE": 630.0529237551377
+        },
+        {
+          "model": "Polynomial Regression (deg=2)",
+          "type": "regression",
+          "R-Squared": 0.7327064649699927,
+          "MSE": 773997.8259810557,
+          "RMSE": 879.7714623588649,
+          "MAE": 575.8073273272373
+        },
+        {
+          "model": "LASSO Regression",
+          "type": "regression",
+          "R-Squared": 0.7719248617229594,
+          "MSE": 660433.7107028806,
+          "RMSE": 812.6707271108519,
+          "MAE": 630.0253603683777
+        },
+        {
+          "model": "RIDGE Regression",
+          "type": "regression",
+          "R-Squared": 0.7707435063390942,
+          "MSE": 663854.5435289348,
+          "RMSE": 814.7726943933104,
+          "MAE": 629.7942594593475
+        },
+        {
+          "model": "Quantile Regression (approx)",
+          "type": "regression",
+          "R-Squared": 0.7719538880698169,
+          "MSE": 660349.6595515448,
+          "RMSE": 812.61901254619,
+          "MAE": 630.0529237551377
+        }
+      ]
+    },
+    "Classification": {
+      "description": "Unit 3: Patient Risk & Disease Classification",
+      "models": [
+        {
+          "model": "Logistic Regression",
+          "type": "classification",
+          "Precision": 1.0,
+          "Recall": 1.0,
+          "F1 Score": 1.0,
+          "ROC-AUC": null,
+          "Confusion Matrix": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              17,
+              0
+            ],
+            [
+              0,
+              0,
+              11
+            ]
+          ]
+        },
+        {
+          "model": "KNN (k=3)",
+          "type": "classification",
+          "Precision": 1.0,
+          "Recall": 1.0,
+          "F1 Score": 1.0,
+          "ROC-AUC": null,
+          "Confusion Matrix": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              17,
+              0
+            ],
+            [
+              0,
+              0,
+              11
+            ]
+          ]
+        },
+        {
+          "model": "Decision Tree",
+          "type": "classification",
+          "Precision": 0.9770833333333332,
+          "Recall": 0.975,
+          "F1 Score": 0.9751646903820816,
+          "ROC-AUC": null,
+          "Confusion Matrix": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              16,
+              1
+            ],
+            [
+              0,
+              0,
+              11
+            ]
+          ]
+        },
+        {
+          "model": "Naive Bayes",
+          "type": "classification",
+          "Precision": 1.0,
+          "Recall": 1.0,
+          "F1 Score": 1.0,
+          "ROC-AUC": null,
+          "Confusion Matrix": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              17,
+              0
+            ],
+            [
+              0,
+              0,
+              11
+            ]
+          ]
+        },
+        {
+          "model": "SVM (RBF)",
+          "type": "classification",
+          "Precision": 1.0,
+          "Recall": 1.0,
+          "F1 Score": 1.0,
+          "ROC-AUC": null,
+          "Confusion Matrix": [
+            [
+              12,
+              0,
+              0
+            ],
+            [
+              0,
+              17,
+              0
+            ],
+            [
+              0,
+              0,
+              11
+            ]
+          ]
+        }
+      ]
+    },
+    "Clustering": {
+      "description": "Unit 4: Patient Dietary Segmentation",
+      "models": [
+        {
+          "model": "K-Means",
+          "type": "clustering",
+          "Silhouette": 0.46020955966407684,
+          "Davies-Bouldin": 0.7941820487973561,
+          "K": 2
+        },
+        {
+          "model": "Hierarchical Agglomerative",
+          "type": "clustering",
+          "Silhouette": 0.45670721424494226,
+          "Davies-Bouldin": 0.7818574484555005,
+          "K": 2
+        },
+        {
+          "model": "Gaussian Mixture",
+          "type": "clustering",
+          "Silhouette": 0.4428056325801623,
+          "Davies-Bouldin": 0.7862688255858986,
+          "BIC": -1228.7157551314535,
+          "K": 2
+        },
+        {
+          "model": "Apriori",
+          "type": "clustering",
+          "frequent_itemsets": {
+            "Protein_High": 0.5,
+            "Sugar_Low": 0.5,
+            "Calories_Low": 0.5,
+            "Sugar_High": 0.5,
+            "Calories_High": 0.5,
+            "Protein_Low": 0.5
+          },
+          "rules": [
+            {
+              "antecedent": "Protein_High",
+              "consequent": "Sugar_High",
+              "support": 0.42,
+              "confidence": 0.84
+            },
+            {
+              "antecedent": "Protein_High",
+              "consequent": "Calories_High",
+              "support": 0.475,
+              "confidence": 0.95
+            },
+            {
+              "antecedent": "Sugar_Low",
+              "consequent": "Calories_Low",
+              "support": 0.425,
+              "confidence": 0.85
+            },
+            {
+              "antecedent": "Sugar_Low",
+              "consequent": "Protein_Low",
+              "support": 0.42,
+              "confidence": 0.84
+            },
+            {
+              "antecedent": "Calories_Low",
+              "consequent": "Sugar_Low",
+              "support": 0.425,
+              "confidence": 0.85
+            },
+            {
+              "antecedent": "Calories_Low",
+              "consequent": "Protein_Low",
+              "support": 0.475,
+              "confidence": 0.95
+            },
+            {
+              "antecedent": "Sugar_High",
+              "consequent": "Protein_High",
+              "support": 0.42,
+              "confidence": 0.84
+            },
+            {
+              "antecedent": "Sugar_High",
+              "consequent": "Calories_High",
+              "support": 0.425,
+              "confidence": 0.85
+            },
+            {
+              "antecedent": "Calories_High",
+              "consequent": "Protein_High",
+              "support": 0.475,
+              "confidence": 0.95
+            },
+            {
+              "antecedent": "Calories_High",
+              "consequent": "Sugar_High",
+              "support": 0.425,
+              "confidence": 0.85
+            }
+          ]
+        }
+      ]
+    },
+    "Ensemble": {
+      "description": "Unit 5: Advanced Ensemble Learning",
+      "models": [
+        {
+          "model": "Random Forest (Bagging)",
+          "type": "ensemble",
+          "Train Accuracy": 1.0,
+          "Test Accuracy": 1.0,
+          "F1 Score": 1.0,
+          "Precision": 1.0,
+          "Recall": 1.0,
+          "Confusion Matrix": "[[12  0  0]\n [ 0 17  0]\n [ 0  0 11]]",
+          "Overfitting Gap": 0.0
+        },
+        {
+          "model": "AdaBoost (Boosting)",
+          "type": "ensemble",
+          "Train Accuracy": 1.0,
+          "Test Accuracy": 0.975,
+          "F1 Score": 0.9747619047619047,
+          "Precision": 0.976388888888889,
+          "Recall": 0.975,
+          "Confusion Matrix": "[[12  0  0]\n [ 0 17  0]\n [ 0  1 10]]",
+          "Overfitting Gap": 0.025000000000000022
+        },
+        {
+          "model": "Gradient Boosting",
+          "type": "ensemble",
+          "Train Accuracy": 1.0,
+          "Test Accuracy": 1.0,
+          "F1 Score": 1.0,
+          "Precision": 1.0,
+          "Recall": 1.0,
+          "Confusion Matrix": "[[12  0  0]\n [ 0 17  0]\n [ 0  0 11]]",
+          "Overfitting Gap": 0.0
+        },
+        {
+          "model": "XGBoost (approx)",
+          "type": "ensemble",
+          "Train Accuracy": 1.0,
+          "Test Accuracy": 1.0,
+          "F1 Score": 1.0,
+          "Precision": 1.0,
+          "Recall": 1.0,
+          "Confusion Matrix": "[[12  0  0]\n [ 0 17  0]\n [ 0  0 11]]",
+          "Overfitting Gap": 0.0
+        }
+      ]
+    },
+    "Dimensionality Reduction": {
+      "description": "Unit 5: PCA & LDA Comparison",
+      "models": [
+        {
+          "model": "PCA",
+          "type": "dimensionality_reduction",
+          "n_components": "4",
+          "total_variance_explained": 0.967952210738005
+        },
+        {
+          "model": "LDA",
+          "type": "dimensionality_reduction",
+          "n_components": 2,
+          "total_variance_explained": 1.0
+        }
+      ]
+    }
+  },
+  "summary": {
+    "total_models_evaluated": 21,
+    "regression_models": 6,
+    "classification_models": 5,
+    "clustering_models": 4,
+    "ensemble_models": 4,
+    "dimensionality_reduction_models": 2
+  }
+}

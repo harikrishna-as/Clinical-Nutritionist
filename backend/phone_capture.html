@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Phone Capture → Nutrition AI Lab</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a101f; color: #f3f4f6; min-height: 100vh; padding: 18px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  h1 { font-size: 17px; letter-spacing: 0.3px; margin-bottom: 4px; }
+  .sub { color: #94a3b8; font-size: 12.5px; text-align: center; margin-bottom: 16px; max-width: 330px; }
+  #room { color: #a78bfa; font-weight: 700; }
+  #previewBox {
+    width: 100%; max-width: 360px; height: 400px; border-radius: 16px; overflow: hidden;
+    background: #0f172a; border: 1px solid rgba(148,163,184,0.3);
+    display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 14px;
+  }
+  #previewBox video { width: 100%; height: 100%; object-fit: cover; display: none; }
+  #previewBox img { width: 100%; height: 100%; object-fit: cover; display: none; }
+  #previewBox .ph { color: #64748b; font-size: 13px; text-align: center; padding: 20px; }
+  .row { display: flex; gap: 10px; width: 100%; max-width: 360px; margin-bottom: 12px; }
+  button {
+    flex: 1; padding: 14px 10px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700;
+    font-family: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .btn-cam { background: #60a5fa; color: #0a101f; }
+  .btn-gallery { background: rgba(96,165,250,0.15); color: #a78bfa; border: 1px solid rgba(96,165,250,0.35); }
+  .btn-send {
+    width: 100%; max-width: 360px; background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff;
+    font-size: 16px; padding: 16px; margin-bottom: 10px;
+  }
+  .btn-send:disabled { opacity: 0.45; }
+  #status { font-size: 13px; color: #94a3b8; text-align: center; min-height: 38px; line-height: 1.5; margin-top: 4px; }
+  #status.ok { color: #22c55e; font-weight: 700; }
+  #status.err { color: #ef4444; }
+  #live { display: none; margin-bottom: 10px; font-size: 12px; color: #22c55e; }
+  #snapRow { display: none; width: 100%; max-width: 360px; margin-bottom: 12px; }
+  #snapRow .btn-snap { background: #a78bfa; color: #0a101f; }
+  .note { font-size: 11.5px; color: #64748b; text-align: center; max-width: 340px; line-height: 1.6; }
+</style>
+</head>
+<body>
+  <h1>Nutrition AI Lab — Phone Camera</h1>
+  <p class="sub">Live pairing with your desktop lab window. Photos transfer instantly over Wi‑Fi — nothing leaves your network. Room: <span id="room">…</span></p>
+
+  <div id="previewBox">
+    <video id="video" autoplay playsinline muted></video>
+    <img id="img" alt="">
+    <div class="ph" id="ph">Camera preview / captured photo</div>
+  </div>
+
+  <div id="live">● Live preview active — tap Capture when ready</div>
+
+  <div class="row">
+    <button class="btn-cam" id="snapBtn" style="display:none">Capture</button>
+    <button class="btn-cam" id="camBtn">Take Photo</button>
+    <button class="btn-gallery" id="galleryBtn">Gallery</button>
+  </div>
+
+  <button class="btn-send" id="sendBtn" disabled>Send to Computer Lab</button>
+  <div id="status">Taking a photo opens your phone camera — the photo is sent to the open Camera Lab window on your PC.</div>
+
+  <p class="note">Tip: connect the phone over USB (charging cable) for the fastest transfer, or keep it near the PC over Wi‑Fi / Bluetooth range. Works on any smartphone browser — no app install needed.</p>
+
+  <input type="file" id="file" accept="image/*" style="display:none">
+
+<script>
+  const room = new URLSearchParams(location.search).get('room') || ''
+  document.getElementById('room').textContent = room
+  const video = document.getElementById('video')
+  const img = document.getElementById('img')
+  const ph = document.getElementById('ph')
+  const file = document.getElementById('file')
+  const sendBtn = document.getElementById('sendBtn')
+  const status = document.getElementById('status')
+  let b64 = null
+  let secure = window.isSecureContext
+
+  function setImage(b) {
+    b64 = b
+    video.style.display = 'none'
+    img.style.display = 'block'
+    img.src = 'data:image/jpeg;base64,' + b
+    ph.style.display = 'none'
+    sendBtn.disabled = false
+    sendBtn.textContent = '✓ Send to Computer Lab'
+  }
+
+  document.getElementById('camBtn').onclick = () => {
+    file.setAttribute('capture', 'environment')
+    file.click()
+  }
+  document.getElementById('galleryBtn').onclick = () => {
+    file.removeAttribute('capture')
+    file.click()
+  }
+  file.onchange = (e) => {
+    const f = e.target.files && e.target.files[0]
+    if (!f) return
+    const r = new FileReader()
+    r.onload = () => setImage(r.result.split(',')[1])
+    r.readAsDataURL(f)
+  }
+
+  async function initLive() {
+    if (!secure || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+      video.srcObject = s
+      video.style.display = 'block'
+      ph.style.display = 'none'
+      document.getElementById('live').style.display = 'block'
+      document.getElementById('snapRow').style.display = 'block'
+      document.getElementById('snapBtn').style.display = 'inline-block'
+      document.getElementById('camBtn').style.display = 'none'
+      document.getElementById('snapBtn').onclick = () => {
+        const c = document.createElement('canvas')
+        c.width = video.videoWidth; c.height = video.videoHeight
+        c.getContext('2d').drawImage(video, 0, 0)
+        setImage(c.toDataURL('image/jpeg', 0.9).split(',')[1])
+        s.getTracks().forEach(t => t.stop())
+        video.style.display = 'none'
+        document.getElementById('live').style.display = 'none'
+      }
+    } catch (e) { console.log('live preview unavailable:', e.message) }
+  }
+  initLive()
+
+  sendBtn.onclick = async () => {
+    if (!b64) return
+    sendBtn.disabled = true
+    sendBtn.textContent = 'Sending…'
+    status.textContent = 'Uploading photo…'
+    status.className = ''
+    try {
+      const res = await fetch('/api/phone/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room: room, image: b64 }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'send failed')
+      status.textContent = 'Sent! Your desktop lab received the photo.'
+      status.className = 'ok'
+      img.style.display = 'none'; ph.style.display = 'block'; ph.textContent = 'Photo sent ✓ — taking another…'
+      b64 = null
+      sendBtn.disabled = true
+      setTimeout(() => {
+        ph.textContent = 'Camera preview / captured photo'
+        status.textContent = 'Taking a photo opens your phone camera — sent to the open Camera Lab on your PC.'
+        status.className = ''
+      }, 1600)
+    } catch (err) {
+      sendBtn.disabled = false
+      sendBtn.textContent = 'Retry Send'
+      status.textContent = 'Send failed: ' + err.message + ' (make sure the PC window is open and you are on the same network)'
+      status.className = 'err'
+    }
+  }
+
+  document.addEventListener('paste', (e) => {
+    const item = [...(e.clipboardData || {}).items || []].find(i => i.type && i.type.startsWith('image/'))
+    if (!item) return
+    const f = item.getAsFile()
+    const r = new FileReader()
+    r.onload = () => setImage(r.result.split(',')[1])
+    r.readAsDataURL(f)
+  })
+</script>
+</body>
+</html>

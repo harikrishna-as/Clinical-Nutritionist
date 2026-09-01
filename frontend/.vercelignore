@@ -3,3 +3,6 @@ dist
 .git
 build_map*.txt
 build_out.txt
+public/models
+public/frames
+public/libs/draco

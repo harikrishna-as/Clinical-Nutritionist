@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password Form</title>
+    <!-- EmailJS SDK - Load First -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            // Initialize with your public key
+            emailjs.init("vBpaphpWp1by7J4LG");
+        })();
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #0b0b45;
+        }
+        
+        .form-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 15px 20px rgba(255, 255, 255, 0.5);
+            width: 350px;
+            text-align: center;
+            position: relative;
+        }
+        
+        h2 {
+            color: #ffffff;
+            margin: 0;
+            padding: 15px;
+            background: linear-gradient(-135deg, #0892d0, #4B0082);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        .form-content {
+            margin-top: 70px;
+        }
+        
+        .email-section {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000000;
+            text-align: left;
+        }
+        
+        input[type="email"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #9b59b6;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .verify-btn {
+            background: linear-gradient(-135deg, #0892d0, #4B0082);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 95%;
+            font-size: 16px;
+        }
+        
+        .otp-section {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .otp-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin: 15px 0;
+        }
+        
+        .otp-inputs input {
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            padding: 5px;
+            text-align: center;
+            border-radius: 5px;
+            border: 2px solid #55525c;
+            background: #0b0b45;
+            font-weight: bold;
+            color: #fff;
+            outline: none;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(-135deg, #0892d0, #4B0082);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 95%;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        #responseMessage {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Forgot Password</h2>
+        
+        <div class="form-content">
+            <div class="email-section">
+                <label for="email">Enter your e-mail</label>
+                <input type="email" id="email_id" name="email" placeholder="Your registered email" required>
+                <button type="button" id="otp_code" class="verify-btn" onclick="generateOTP()">Send OTP</button>
+            </div>
+            
+            <div id="otp-section" class="otp-section">
+                <label>Enter OTP sent to your email</label>
+                <div class="otp-inputs">
+                    <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 0)">
+                    <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 1)">
+                    <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 2)">
+                    <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 3)">
+                    <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 4)">
+                    <input type="text" class="otp-input" maxlength="1" onkeyup="moveToNext(this, 5)">
+                </div>
+                <button type="button" class="submit-btn" onclick="verifyOTP()">Verify OTP</button>
+            </div>
+            
+            <div id="responseMessage"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Global variable to store OTP
+        let generatedOTP = "";
+        
+        // Function to generate and send OTP
+        function generateOTP() {
+            var email = document.getElementById('email_id').value;
+            var responseMsg = document.getElementById('responseMessage');
+            if (!email) {
+                responseMsg.innerText = "Please enter your email address.";
+                responseMsg.style.color = "red";
+                return;
+            }
+            
+            // Generate 6-digit OTP
+            generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // Show loading message
+            responseMsg.innerText = "Sending OTP to your email...";
+            responseMsg.style.color = "blue";
+            
+            // Send email using EmailJS
+            const templateParams = {
+                email_id: email,
+                otp_code: generatedOTP
+            };
+            
+            emailjs.send('service_4s8c8ab', 'template_td4hyko', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    document.getElementById('otp-section').style.display = 'block';
+                    responseMsg.innerText = "OTP sent successfully! Please check your email.";
+                    responseMsg.style.color = "green";
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    responseMsg.innerText = "Failed to send OTP. Please try again.";
+                    responseMsg.style.color = "red";
+                });
+        }
+        
+        function moveToNext(currentInput, index) {
+            const inputs = document.getElementsByClassName('otp-input');
+            
+            if (currentInput.value.length > 0 && index < 5) {
+                inputs[index + 1].focus();
+            }
+            currentInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && currentInput.value.length === 0 && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        }
+        
+        function verifyOTP() {
+            const inputs = document.getElementsByClassName('otp-input');
+            let enteredOTP = "";
+            for (let i = 0; i < inputs.length; i++) {
+                enteredOTP += inputs[i].value;
+            }
+            const responseMsg = document.getElementById('responseMessage');
+            if (enteredOTP === generatedOTP) {
+                responseMsg.innerText = "OTP verified successfully! You can now reset your password.";
+                responseMsg.style.color = "green";
+                // In a real application, you would redirect to password reset page here
+                // window.location.href = "reset-password.html";
+            } else {
+                responseMsg.innerText = "Invalid OTP. Please try again.";
+                responseMsg.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>

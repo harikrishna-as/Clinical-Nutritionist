@@ -72,12 +72,6 @@ export default function GlobalCursor() {
     })
     ;['play','pause','ended','volumechange','animationstart','animationend','transitionend'].forEach(t => handlers.push(add(document, t, { passive: true })))
 
-    const prevCursor = document.documentElement.style.cursor
-    document.documentElement.style.cursor = 'none'
-    document.body.style.cursor = 'none'
-    const hideStyle = document.createElement('style')
-    hideStyle.textContent = `* { cursor: none !important; } input, textarea { cursor: text !important; }`
-    document.head.appendChild(hideStyle)
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('mousemove', onMove)
@@ -86,10 +80,7 @@ export default function GlobalCursor() {
       handlers.forEach(([tg, tp, h, o]) => { try{tg.removeEventListener(tp,h,o)}catch{} })
       document.removeEventListener('selectstart', preventSelect)
       document.removeEventListener('dragstart', preventSelect)
-      document.documentElement.style.cursor = prevCursor
-      document.body.style.cursor = ''
       try{ document.head.removeChild(style)}catch{}
-      try{ document.head.removeChild(hideStyle)}catch{}
     }
   }, [])
 

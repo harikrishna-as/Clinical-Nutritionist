@@ -1,0 +1,1 @@
+from knowledge_graph.food_knowledge_graph import FoodKnowledgeGraph

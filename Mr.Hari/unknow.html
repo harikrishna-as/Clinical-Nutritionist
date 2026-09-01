@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex — Styled Page</title>
+    <style>
+        {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", system-ui, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(160deg, #0f172a 0%, #1e293b 40%, #0c4a6e 100%);
+            color: #e2e8f0;
+            line-height: 1.65;
+        }
+
+        header {
+            padding: 2.5rem 1.25rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.35), rgba(99, 102, 241, 0.25));
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        header .title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0 0 0.35rem;
+            color: #f8fafc;
+        }
+
+        header .subtitle {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+
+        main {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 1.75rem 1.25rem 3rem;
+        }
+
+        section {
+            background: rgba(30, 41, 59, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-radius: 14px;
+            padding: 1.5rem 1.35rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        h2 {
+            margin: 0 0 0.75rem;
+            font-size: 1.2rem;
+            color: #38bdf8;
+            border-bottom: 2px solid rgba(56, 189, 248, 0.35);
+            padding-bottom: 0.45rem;
+        }
+
+        p {
+            margin: 0.65rem 0 0;
+            color: #cbd5e1;
+        }
+
+        ul {
+            list-style-type: square;
+            margin: 1rem 0 0;
+            padding-left: 1.25rem;
+            color: #cbd5e1;
+        }
+
+        ol {
+            list-style-type: decimal;
+            margin: 1rem 0 0;
+            padding-left: 1.5rem;
+            color: #cbd5e1;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        form {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            padding: 1.35rem;
+            border-radius: 12px;
+            margin-top: 1rem;
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        form input,
+        form textarea {
+            width: 100%;
+            padding: 0.65rem 0.75rem;
+            margin: 0 0 0.85rem;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.8);
+            color: #f1f5f9;
+            font-size: 1rem;
+        }
+
+        form input:focus,
+        form textarea:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        form input[type="submit"] {
+            width: auto;
+            margin-top: 0.35rem;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 0.65rem 1.35rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+
+        form input[type="submit"]:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+        }
+
+        .error {
+            display: block;
+            color: #fca5a5;
+            font-size: 0.85rem;
+            margin: -0.5rem 0 0.65rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.25rem 1rem 2rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.15);
+        }
+
+        .highlight {
+            display: inline;
+            padding: 0.1em 0.35em;
+            border-radius: 4px;
+            background: linear-gradient(transparent 60%, rgba(56, 189, 248, 0.35) 60%);
+            color: #f8fafc;
+        }
+
+        #unique {
+            color: #a5b4fc;
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            border-left: 3px solid #38bdf8;
+        }
+
+        footer a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #7dd3fc;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <p class="title">Hi, I am Hari</p>
+        <p class="subtitle">A simple styled page — HTML, CSS &amp; form validation</p>
+    </header>
+    <main>
+        <section>
+            <h2>About This Page</h2>
+            <p>
+                This page uses semantic HTML and CSS: sections, typography, lists, and a contact form
+                with client-side validation. The stylesheet also shows common selectors — class, ID,
+                attribute, and pseudo-class — in a clean layout.
+            </p>
+        </section>
+        <section>
+            <h2>Interests &amp; Plans</h2>
+            <p class="highlight">Things I enjoy in my free time:</p>
+            <ul>
+                <li>Reading fiction and tech articles</li>
+                <li>Short trips and exploring new places</li>
+                <li>Cooking simple meals and trying new recipes</li>
+            </ul>
+            <p id="unique">Goals I am working on this year:</p>
+            <ol>
+                <li>Finish two books from my reading list</li>
+                <li>Plan a weekend trip with friends</li>
+                <li>Learn one new dish each month</li>
+            </ol>
+        </section>
+        <section>
+            <h2>Contact</h2>
+            <p>Send a message below. All fields are checked before submit.</p>
+            <form id="contactForm" action="#" method="post">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required autocomplete="name">
+                <span class="error" id="nameError"></span>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required autocomplete="email">
+                <span class="error" id="emailError"></span>
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+                <span class="error" id="messageError"></span>
+                <input type="submit" value="Send message">
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Alex — Styled webpage demo.</p>
+        <p><a href="https://www.sret.edu.in/">College website</a></p>
+    </footer>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            let isValid = true;
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            const nameError = document.getElementById('nameError');
+            const emailError = document.getElementById('emailError');
+            const messageError = document.getElementById('messageError');
+            nameError.textContent = '';
+            emailError.textContent = '';
+            messageError.textContent = '';
+            if (name.trim() === '') {
+                nameError.textContent = 'Name is required.';
+                isValid = false;
+            }
+            if (email.trim() === '') {
+                emailError.textContent = 'Email is required.';
+                isValid = false;
+            } else {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    emailError.textContent = 'Invalid email address.';
+                    isValid = false;
+                }
+            }
+            if (message.trim() === '') {
+                messageError.textContent = 'Message is required.';
+                isValid = false;
+            }
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+
+</html>

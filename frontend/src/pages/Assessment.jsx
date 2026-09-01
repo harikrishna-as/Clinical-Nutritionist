@@ -4,9 +4,10 @@ import {
   TrendingUp, TrendingDown, Scissors, Flame, AlertTriangle, Droplet,
   Camera, Upload, ScanLine, RefreshCw, FileText, Activity, ArrowRight,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { api } from '../api'
 import { HEALTH_CONDITIONS } from '../lib/data'
+import { useAuth } from '../context/AuthContext'
 import SaveToggle from '../components/ui/SaveToggle'
 import GlassCard from '../components/ui/GlassCard'
 import Spotlight from '../components/ui/Spotlight'
@@ -27,6 +28,16 @@ const Field = ({ label, children }) => (
 export default function Assessment() {
   const [conditionId, setConditionId] = useState('weight_gain')
   const condition = HEALTH_CONDITIONS.find((c) => c.id === conditionId)
+  const { isAuthenticated } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const requireLogin = () => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: location.pathname } })
+      return false
+    }
+    return true
+  }
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -146,7 +157,7 @@ export default function Assessment() {
               <div className="assess-grid">
                 {/* LEFT: form + camera */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                  <form onSubmit={submit} className="card" style={{ overflow: 'hidden' }}>
+                  <form onSubmit={(e) => { if (!requireLogin()) return; submit(e) }} onFocusCapture={() => requireLogin()} className="card" style={{ overflow: 'hidden' }}>
                     <h3 style={{ marginBottom: 18 }}>Patient Data</h3>
                     <div className="form-grid">
                       <Field label="Patient Name">

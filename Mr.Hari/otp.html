@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+        integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="style.css">
+    <title>OTP Field Form - Coding Torque</title>
+    <style>
+        body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: #282a36;
+  height: 100vh;
+  color: #fff;
+  background-color: #0b0b2d;
+  position: relative;
+  bottom: 30px;
+}
+.otpverify {
+  display: flex;
+}
+.otpverify input {
+  width: 24px;
+  font-size: 32px;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  margin: 2px;
+  border: 2px solid #55525c;
+  background: #21232d;
+  font-weight: bold;
+  color: #fff;
+  outline: none;
+  transition: all 0.1s;
+}
+.otpverify input:focus {
+  border: 2px solid #a527ff;
+  box-shadow: 0 0 2px 2px #a527ff6a;
+}
+.disabled {
+  opacity: 0.5;
+}
+.space {
+  margin-right: 1rem !important;
+}
+.box{
+  background-color: #fff;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 15px 20px rgba(255, 255, 255, 0.5);
+}
+h1{
+  color: black;
+  text-align: center;
+  position: relative;
+  bottom: 20px;
+  background: linear-gradient(-135deg, #0892d0, #4B0082);
+  margin-top: 0px;
+  margin-left: -20px;
+  margin-right: -20px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.no-select {
+  user-select: none; 
+  -webkit-user-select: none; 
+  -moz-user-select: none; 
+  -ms-user-select: none;
+}
+.loader-wrapper{
+  width: 100px;
+  height: 100px;
+  position: relative;
+  top: 0;
+  left: 0;
+  background-color: #0b0b2d;
+}
+#loader{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  overflow: visible;
+  background:  #0b0b2d url('i6.gif') no-repeat center center;
+  scale: 1;
+}
+    </style>
+    <script src="https://smpjs.com/v3/smtp.js"></script>
+</head>
+<body>
+  <div class="no-select">
+    <div id="loader"></div>
+   <div id="content"></div>
+  <div class="box">
+<h1>Enter OTP</h1>
+<div class="otpverify">
+    <input type="text" maxlength="1" />
+    <input type="text" maxlength="1" />
+    <input class="space" type="text" maxlength="1" />
+    <input type="text" maxlength="1" />
+    <input type="text" maxlength="1" />
+    <input type="text" maxlength="1" />
+    <button class="btn" id="otp_btn">Verify</button>
+</div>
+</div>
+</div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+  const inputs = document.querySelectorAll(".otp-field input");
+  inputs.forEach((input, index) => {
+    input.addEventListener("input", function() {
+      if (input.value.length === 1 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    });
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Backspace" && input.value === "" && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
+    input.addEventListener("paste", function(e) {
+      e.preventDefault();
+      const pasteData = e.clipboardData.getData("text").split("");
+      inputs.forEach((input, i) => {
+        if (pasteData[i]) {
+          input.value = pasteData[i];
+          if (i < inputs.length - 1 && pasteData[i + 1]) {
+            inputs[i + 1].focus();
+          } else {
+            inputs[Math.min(pasteData.length, inputs.length) - 1].focus();
+          }
+        }
+      });
+    });
+  });
+});
+var loader;
+function loadNow(opacity){
+    if(opacity<=0){
+        displayContent();
+    }
+    else{
+        loader.style.opacity = opacity;
+        window.setTimeout(function(){
+            loadNow(opacity - 0.5)
+        },100);
+    }
+}
+function displayContent(){
+    loader.style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+}
+document.addEventListener("DOMContentLoaded",function(){
+    loader = document.getElementById('loader');
+    loadNow(0.1);
+});
+function sendOTP(){
+     const email = document.getElementById('email');
+     const otpverify = document.getElementsByClassName('otp-field')[0];
+     let otp_val = Math.floor(Math.random() * 100000);
+     let emailbody = `<h2>Your OTP from Mr.Hari is </h2>${otp_val}`;
+     Email.send({
+SecureToken: "b91e79e7-a744-4d8f-b567-0ace587623f1",
+To: email.value,
+From: "harikrishna.a.s.1618@gmail.com",
+Subject: "Mail OTP using JS",
+Body: emailbody,
+}).then(
+message => {
+  if(message === "0k"){
+    alert("OTP sent to Your email"+ email.value);
+    otpverify.style.display = "flex";
+    const otp_inp = document.getElementById('otp_inp');
+    const otp_btn = document.getElementById('otp_btn');
+    otp_btn.addEventListener('click',() => {
+      if(otp_inp.value == otp_val){
+        alert("Email Verified...");
+      }
+      else{
+        alert("Invalid OTP");
+      }
+    })
+  }
+}
+);
+}
+    </script>
+</body>
+</html>

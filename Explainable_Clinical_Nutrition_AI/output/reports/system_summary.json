@@ -1,0 +1,70 @@
+{
+  "system": "Explainable Multi-Agent AI Clinical Nutrition DSS",
+  "phases_completed": [
+    "Phase 1: Data Integration & Preprocessing",
+    "Phase 2: Food Knowledge Graph",
+    "Phase 3: Regression Models (Unit 2)",
+    "Phase 4: Classification Models (Unit 3)",
+    "Phase 5: Clustering Models (Unit 4)",
+    "Phase 6: Ensemble Learning (Unit 5)",
+    "Phase 7: Dimensionality Reduction (Unit 5)",
+    "Phase 8: Multi-Agent System",
+    "Phase 9: Explainability",
+    "Phase 10: Report Generation"
+  ],
+  "ml_concepts_demonstrated": {
+    "Unit 1": [
+      "Data Cleaning",
+      "Data Integration",
+      "Data Reduction",
+      "Data Transformation"
+    ],
+    "Unit 2": [
+      "Linear Regression",
+      "Multiple Linear Regression",
+      "Polynomial Regression",
+      "LASSO",
+      "RIDGE",
+      "Quantile Regression",
+      "R-Squared",
+      "RMSE",
+      "MSE"
+    ],
+    "Unit 3": [
+      "Logistic Regression",
+      "KNN",
+      "Decision Trees",
+      "Naive Bayes",
+      "SVM",
+      "ROC",
+      "Confusion Matrix",
+      "Precision",
+      "Recall",
+      "F1 Score"
+    ],
+    "Unit 4": [
+      "K-Means",
+      "Hierarchical Agglomerative",
+      "Gaussian Mixture",
+      "Apriori Algorithm",
+      "Silhouette Score",
+      "Davies-Bouldin Index"
+    ],
+    "Unit 5": [
+      "Random Forest",
+      "AdaBoost",
+      "XGBoost",
+      "Bias-Variance Tradeoff",
+      "PCA",
+      "LDA"
+    ]
+  },
+  "agents": [
+    "Patient Analysis Agent",
+    "Nutrition Agent",
+    "Allergy Agent",
+    "Medication Diet Agent",
+    "Cultural Agent",
+    "Recommendation Agent"
+  ]
+}

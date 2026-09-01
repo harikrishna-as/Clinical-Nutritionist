@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartSteth v2 — Clinical Monitor</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:       #030c14;
+  --bg2:      #060f1c;
+  --bg3:      #0a1929;
+  --panel:    #0d2137;
+  --border:   #0e3559;
+  --cyan:     #00e5ff;
+  --cyan2:    #00b0cc;
+  --green:    #00e676;
+  --yellow:   #ffea00;
+  --red:      #ff1744;
+  --orange:   #ff6d00;
+  --purple:   #d500f9;
+  --text:     #cce8f4;
+  --muted:    #4a7a9b;
+  --glow:     0 0 18px #00e5ff55;
+  --glow2:    0 0 30px #00e5ff33;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  font-size:15px;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── GRID SCAN BACKGROUND ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 39px,#00e5ff08 40px),
+    repeating-linear-gradient(90deg,transparent,transparent 39px,#00e5ff08 40px);
+  pointer-events:none;z-index:0;
+}
+
+/* ── HEADER ── */
+header{
+  position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(90deg,#030c14,#061522,#030c14);
+}
+
+.logo{
+  font-family:'Orbitron',monospace;
+  font-size:20px;font-weight:900;
+  letter-spacing:4px;
+  color:var(--cyan);
+  text-shadow:var(--glow);
+}
+.logo span{color:#fff;font-weight:400}
+
+.header-center{
+  display:flex;gap:32px;align-items:center;
+}
+
+.session-time{
+  font-family:'Share Tech Mono',monospace;
+  font-size:13px;color:var(--muted);
+}
+#sessionClock{color:var(--cyan);font-size:16px}
+
+.status-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--muted);
+  box-shadow:none;
+  transition:.4s;
+}
+.status-dot.live{
+  background:var(--green);
+  box-shadow:0 0 10px var(--green);
+  animation:pulse 1.2s infinite;
+}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.mode-badge{
+  font-family:'Orbitron',monospace;
+  font-size:11px;letter-spacing:2px;
+  padding:4px 14px;
+  border:1px solid var(--cyan2);
+  color:var(--cyan);
+  background:#001e2e;
+  border-radius:2px;
+}
+
+.connect-btn{
+  font-family:'Orbitron',monospace;
+  font-size:11px;letter-spacing:2px;
+  padding:8px 20px;
+  border:1px solid var(--cyan);
+  background:transparent;
+  color:var(--cyan);
+  cursor:pointer;
+  transition:.25s;
+  border-radius:2px;
+}
+.connect-btn:hover{background:#00e5ff18;box-shadow:var(--glow)}
+.connect-btn.connected{border-color:var(--green);color:var(--green)}
+
+/* ── MAIN LAYOUT ── */
+main{
+  position:relative;z-index:1;
+  display:grid;
+  grid-template-columns:260px 1fr 280px;
+  grid-template-rows:auto auto auto;
+  gap:14px;
+  padding:14px 18px;
+  min-height:calc(100vh - 60px);
+}
+
+/* ── PANEL BASE ── */
+.panel{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:4px;
+  padding:14px;
+  position:relative;
+  overflow:hidden;
+}
+.panel::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan2),transparent);
+  opacity:.6;
+}
+
+.panel-title{
+  font-family:'Orbitron',monospace;
+  font-size:10px;letter-spacing:3px;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.panel-title::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,var(--border),transparent);
+}
+
+/* ── VITAL CARDS ── */
+.vitals-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+
+.vital-card{
+  background:#08192a;
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:10px;
+  text-align:center;
+  position:relative;
+  transition:.3s;
+}
+.vital-card.alert-card{
+  border-color:var(--red);
+  box-shadow:0 0 14px #ff174422;
+  animation:alertBlink .8s infinite;
+}
+@keyframes alertBlink{0%,100%{border-color:var(--red)}50%{border-color:#ff174488}}
+
+.vital-label{
+  font-size:9px;letter-spacing:2px;
+  color:var(--muted);
+  text-transform:uppercase;
+  margin-bottom:2px;
+}
+.vital-value{
+  font-family:'Orbitron',monospace;
+  font-size:30px;font-weight:700;
+  color:var(--cyan);
+  line-height:1;
+  text-shadow:var(--glow);
+  transition:color .3s;
+}
+.vital-value.warn{color:var(--yellow);text-shadow:0 0 18px #ffea0055}
+.vital-value.crit{color:var(--red);text-shadow:0 0 18px #ff174455}
+.vital-unit{
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;color:var(--muted);margin-top:2px;
+}
+.vital-range{
+  font-size:10px;color:var(--muted);
+  margin-top:4px;
+}
+
+/* ── WAVEFORM ── */
+.waveform-panel{
+  grid-column:1 / 3;
+  padding:0;overflow:hidden;
+}
+
+.wave-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+}
+
+.wave-controls{display:flex;gap:8px}
+.wave-btn{
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;padding:4px 10px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--muted);cursor:pointer;
+  border-radius:2px;transition:.2s;
+}
+.wave-btn:hover,.wave-btn.active{
+  border-color:var(--cyan);color:var(--cyan);
+  background:#001e2e;
+}
+
+canvas{display:block;width:100%}
+
+.wave-footer{
+  padding:6px 14px;
+  display:flex;gap:24px;
+  border-top:1px solid var(--border);
+  background:#040e19;
+}
+.wave-stat{
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;color:var(--muted);
+}
+.wave-stat span{color:var(--cyan)}
+
+/* ── DIAGNOSIS CARDS ── */
+.diag-grid{display:flex;flex-direction:column;gap:8px}
+
+.diag-card{
+  background:#06131f;
+  border:1px solid var(--border);
+  border-radius:3px;
+  padding:10px 12px;
+  transition:.3s;
+}
+.diag-card.abnormal{border-color:var(--orange);background:#0f1a08}
+.diag-card.critical{border-color:var(--red);background:#1a0808}
+.diag-card.normal{border-color:#0a3020}
+
+.diag-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+
+.diag-organ{
+  font-family:'Orbitron',monospace;
+  font-size:10px;letter-spacing:2px;
+  color:var(--muted);
+}
+.diag-status{
+  font-family:'Orbitron',monospace;
+  font-size:13px;letter-spacing:1px;
+  font-weight:700;
+}
+.diag-status.norm{color:var(--green)}
+.diag-status.warn{color:var(--yellow)}
+.diag-status.crit{color:var(--red)}
+
+.diag-detail{
+  font-size:12px;color:#7aa3bc;
+  font-family:'Share Tech Mono',monospace;
+  margin-bottom:7px;
+}
+
+.conf-bar{height:3px;background:#0d2137;border-radius:2px;overflow:hidden}
+.conf-fill{height:100%;border-radius:2px;transition:width 1s ease}
+.conf-fill.high{background:var(--green)}
+.conf-fill.mid{background:var(--yellow)}
+.conf-fill.low{background:var(--red)}
+
+.conf-label{
+  font-size:9px;color:var(--muted);margin-top:3px;
+  font-family:'Share Tech Mono',monospace;
+  display:flex;justify-content:space-between;
+}
+
+/* ── RIGHT PANEL: HISTORY + HRV ── */
+.right-col{
+  grid-column:3;
+  grid-row:1 / 4;
+  display:flex;flex-direction:column;gap:14px;
+}
+
+/* ── TREND CHART ── */
+.trend-chart{height:90px;position:relative;margin-top:6px}
+.trend-chart canvas{width:100%;height:100%}
+
+/* ── ALERT BANNER ── */
+.alert-banner{
+  display:none;
+  position:fixed;top:60px;left:50%;transform:translateX(-50%);
+  z-index:100;
+  background:#1a0000;
+  border:1px solid var(--red);
+  border-radius:4px;
+  padding:10px 28px;
+  font-family:'Orbitron',monospace;
+  font-size:13px;letter-spacing:2px;
+  color:var(--red);
+  text-shadow:0 0 10px var(--red);
+  box-shadow:0 0 30px #ff174444;
+  animation:alertBlink .6s infinite;
+}
+.alert-banner.show{display:block}
+
+/* ── SCROLLING LOG ── */
+.log-panel{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.log-body{
+  flex:1;overflow-y:auto;
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  max-height:200px;
+}
+.log-body::-webkit-scrollbar{width:4px}
+.log-body::-webkit-scrollbar-track{background:var(--bg)}
+.log-body::-webkit-scrollbar-thumb{background:var(--border)}
+
+.log-entry{
+  padding:2px 0;
+  border-bottom:1px solid #0a1929;
+  display:flex;gap:8px;
+}
+.log-time{color:#2a5573;flex-shrink:0}
+.log-text.alert{color:var(--red)}
+.log-text.warn{color:var(--yellow)}
+.log-text.info{color:var(--cyan2)}
+.log-text.norm{color:var(--muted)}
+
+/* ── SIGNAL QUALITY ── */
+.sig-bars{
+  display:flex;gap:4px;align-items:flex-end;height:28px;margin-top:6px;
+}
+.sig-bar{
+  flex:1;background:var(--border);border-radius:2px 2px 0 0;
+  transition:height .5s, background .3s;
+  min-height:4px;
+}
+
+/* ── HRV DISPLAY ── */
+.hrv-ring{
+  width:90px;height:90px;
+  position:relative;margin:0 auto;
+}
+.hrv-ring svg{position:absolute;inset:0}
+.hrv-val{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  font-family:'Orbitron',monospace;
+  font-size:18px;font-weight:700;
+  color:var(--cyan);
+}
+.hrv-val small{font-size:9px;color:var(--muted)}
+
+/* ── EXPORT BUTTON ── */
+.export-btn{
+  font-family:'Orbitron',monospace;
+  font-size:10px;letter-spacing:2px;
+  padding:7px 14px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--muted);cursor:pointer;
+  border-radius:2px;transition:.25s;
+  width:100%;margin-top:auto;
+}
+.export-btn:hover{border-color:var(--cyan);color:var(--cyan);background:#001e2e}
+
+/* ── FREQUENCY SPECTRUM ── */
+.spectrum-bar{
+  display:flex;align-items:flex-end;gap:2px;height:50px;
+  margin-top:8px;
+}
+.freq-bar{
+  flex:1;border-radius:2px 2px 0 0;
+  background:linear-gradient(180deg,var(--cyan),var(--cyan2));
+  transition:height .2s;
+  min-height:2px;
+}
+
+/* ── DEMO NOTE ── */
+.demo-note{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;color:var(--muted);
+  text-align:center;
+  padding:4px;
+  background:#030c14;
+  border:1px solid #0a1929;
+  border-radius:2px;
+  margin-top:6px;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  main{grid-template-columns:1fr 1fr;grid-template-rows:auto auto auto auto}
+  .right-col{grid-column:1/3;grid-row:auto;flex-direction:row;flex-wrap:wrap}
+  .waveform-panel{grid-column:1/3}
+}
+@media(max-width:700px){
+  main{grid-template-columns:1fr}
+  .waveform-panel,.right-col{grid-column:1}
+}
+</style>
+</head>
+<body>
+
+<!-- ALERT BANNER -->
+<div class="alert-banner" id="alertBanner">⚠ CRITICAL ALERT — CHECK PATIENT</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">SMART<span>STETH</span> <span style="font-size:12px;color:var(--muted)">v2.0</span></div>
+  <div class="header-center">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="status-dot" id="statusDot"></div>
+      <div class="session-time">SESSION <span id="sessionClock">00:00</span></div>
+    </div>
+    <div class="mode-badge" id="modeBadge">SCAN</div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center">
+    <button class="connect-btn" id="connectBtn" onclick="connectBluetooth()">⬡ CONNECT BT</button>
+    <button class="wave-btn" onclick="toggleDemo()" id="demoBtn">DEMO</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ─── LEFT: VITALS ─── -->
+  <div class="panel">
+    <div class="panel-title">Vital Signs</div>
+    <div class="vitals-grid">
+      <div class="vital-card" id="bpmCard">
+        <div class="vital-label">Heart Rate</div>
+        <div class="vital-value" id="bpmVal">--</div>
+        <div class="vital-unit">BPM</div>
+        <div class="vital-range">Normal: 60–100</div>
+      </div>
+      <div class="vital-card" id="brCard">
+        <div class="vital-label">Resp. Rate</div>
+        <div class="vital-value" id="brVal">--</div>
+        <div class="vital-unit">BPM</div>
+        <div class="vital-range">Normal: 12–20</div>
+      </div>
+      <div class="vital-card" id="rmsCard">
+        <div class="vital-label">RMS Amp</div>
+        <div class="vital-value" id="rmsVal">--</div>
+        <div class="vital-unit">units</div>
+        <div class="vital-range">Signal strength</div>
+      </div>
+      <div class="vital-card" id="hrvCard">
+        <div class="vital-label">HRV</div>
+        <div class="vital-value" id="hrvVal">--</div>
+        <div class="vital-unit">ms RMSSD</div>
+        <div class="vital-range">Normal: 20–80ms</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div class="panel-title">Signal Quality</div>
+      <div class="sig-bars" id="sigBars">
+        <div class="sig-bar" style="height:8px"></div>
+        <div class="sig-bar" style="height:8px"></div>
+        <div class="sig-bar" style="height:8px"></div>
+        <div class="sig-bar" style="height:8px"></div>
+        <div class="sig-bar" style="height:8px"></div>
+        <div class="sig-bar" style="height:8px"></div>
+        <div class="sig-bar" style="height:8px"></div>
+        <div class="sig-bar" style="height:8px"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px">
+      <div class="panel-title">Freq Spectrum</div>
+      <div class="spectrum-bar" id="spectrumBars">
+        <div class="freq-bar" style="height:4px"></div><div class="freq-bar" style="height:4px"></div>
+        <div class="freq-bar" style="height:4px"></div><div class="freq-bar" style="height:4px"></div>
+        <div class="freq-bar" style="height:4px"></div><div class="freq-bar" style="height:4px"></div>
+        <div class="freq-bar" style="height:4px"></div><div class="freq-bar" style="height:4px"></div>
+        <div class="freq-bar" style="height:4px"></div><div class="freq-bar" style="height:4px"></div>
+        <div class="freq-bar" style="height:4px"></div><div class="freq-bar" style="height:4px"></div>
+        <div class="freq-bar" style="height:4px"></div><div class="freq-bar" style="height:4px"></div>
+        <div class="freq-bar" style="height:4px"></div><div class="freq-bar" style="height:4px"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:2px;font-family:'Share Tech Mono',monospace">
+        <span>20Hz</span><span>100Hz</span><span>500Hz</span><span>2kHz</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── CENTER: WAVEFORM ─── -->
+  <div class="panel waveform-panel">
+    <div class="wave-header">
+      <div class="panel-title" style="margin:0">Live Acoustic Waveform</div>
+      <div class="wave-controls">
+        <button class="wave-btn active" onclick="setWaveMode('line',this)">LINE</button>
+        <button class="wave-btn" onclick="setWaveMode('fill',this)">FILL</button>
+        <button class="wave-btn" onclick="setWaveMode('dots',this)">DOTS</button>
+        <button class="wave-btn" onclick="setWaveMode('bars',this)">BARS</button>
+        <button class="wave-btn" onclick="clearWave()">CLR</button>
+      </div>
+    </div>
+    <canvas id="waveCanvas" height="160"></canvas>
+    <div class="wave-footer">
+      <div class="wave-stat">RAW: <span id="rawVal">--</span></div>
+      <div class="wave-stat">RMS: <span id="rmsFooter">--</span></div>
+      <div class="wave-stat">PEAKS: <span id="peakStat">0</span></div>
+      <div class="wave-stat">THRESH: <span id="threshStat">--</span></div>
+      <div class="wave-stat" style="margin-left:auto">
+        <span id="btStatus" style="color:var(--muted)">● DISCONNECTED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── BOTTOM LEFT: DIAGNOSIS ─── -->
+  <div class="panel" style="grid-column:1">
+    <div class="panel-title">Acoustic Diagnosis</div>
+    <div class="diag-grid">
+      <!-- HEART -->
+      <div class="diag-card normal" id="diagHeart">
+        <div class="diag-header">
+          <div class="diag-organ">♥ Cardiac</div>
+          <div class="diag-status norm" id="heartStatus">NORM</div>
+        </div>
+        <div class="diag-detail" id="heartDetail">Normal sinus rhythm</div>
+        <div class="conf-bar"><div class="conf-fill high" id="heartConf" style="width:0%"></div></div>
+        <div class="conf-label"><span>Confidence</span><span id="heartConfPct">0%</span></div>
+      </div>
+      <!-- LUNG -->
+      <div class="diag-card normal" id="diagLung">
+        <div class="diag-header">
+          <div class="diag-organ">🫁 Pulmonary</div>
+          <div class="diag-status norm" id="lungStatus">NORM</div>
+        </div>
+        <div class="diag-detail" id="lungDetail">Clear lung fields</div>
+        <div class="conf-bar"><div class="conf-fill high" id="lungConf" style="width:0%"></div></div>
+        <div class="conf-label"><span>Confidence</span><span id="lungConfPct">0%</span></div>
+      </div>
+      <!-- VASCULAR -->
+      <div class="diag-card normal" id="diagVasc">
+        <div class="diag-header">
+          <div class="diag-organ">〰 Vascular</div>
+          <div class="diag-status norm" id="vascStatus">NORM</div>
+        </div>
+        <div class="conf-bar" style="margin-top:6px"><div class="conf-fill high" style="width:80%"></div></div>
+      </div>
+      <!-- ABDOMEN -->
+      <div class="diag-card normal" id="diagAbd">
+        <div class="diag-header">
+          <div class="diag-organ">◎ Abdomen</div>
+          <div class="diag-status norm" id="abdStatus">NORM</div>
+        </div>
+        <div class="conf-bar" style="margin-top:6px"><div class="conf-fill high" style="width:80%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── BOTTOM CENTER: BPM TREND ─── -->
+  <div class="panel" style="grid-column:2">
+    <div class="panel-title">BPM / BR Trend (60s)</div>
+    <div class="trend-chart">
+      <canvas id="trendCanvas" height="90"></canvas>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:8px">
+      <div style="font-family:'Share Tech Mono',monospace;font-size:11px">
+        <span style="color:var(--cyan)">─</span> Heart Rate
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:11px">
+        <span style="color:var(--green)">─</span> Resp Rate
+      </div>
+      <div style="margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">
+        Avg BPM: <span id="avgBpm" style="color:var(--cyan)">--</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── RIGHT COL ─── -->
+  <div class="right-col">
+
+    <!-- HRV RING -->
+    <div class="panel">
+      <div class="panel-title">Heart Rate Variability</div>
+      <div class="hrv-ring" id="hrvRing">
+        <svg viewBox="0 0 90 90" width="90" height="90">
+          <circle cx="45" cy="45" r="38" fill="none" stroke="#0d2137" stroke-width="8"/>
+          <circle cx="45" cy="45" r="38" fill="none" stroke="var(--cyan)" stroke-width="8"
+            stroke-dasharray="239" stroke-dashoffset="239"
+            stroke-linecap="round" transform="rotate(-90 45 45)"
+            id="hrvCircle" style="transition:stroke-dashoffset 1s ease"/>
+        </svg>
+        <div class="hrv-val">
+          <div id="hrvRingVal">--</div>
+          <small>ms</small>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:8px">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--muted)">
+          HRV Status: <span id="hrvLabel" style="color:var(--cyan)">WAITING</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="panel log-panel">
+      <div class="panel-title">Event Log</div>
+      <div class="log-body" id="logBody">
+        <div class="log-entry">
+          <span class="log-time">00:00</span>
+          <span class="log-text info">System initialized</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPORT -->
+    <button class="export-btn" onclick="exportCSV()">⬇ EXPORT SESSION CSV</button>
+    <div class="demo-note">⚠ For educational use only. Not a medical device.</div>
+  </div>
+
+</main>
+
+<script>
+//=============================================================
+// STATE
+//=============================================================
+const waveData    = new Array(600).fill(0.5);
+const bpmHistory  = new Array(60).fill(null);
+const brHistory   = new Array(60).fill(null);
+let   waveMode    = 'line';
+let   peakCount   = 0;
+let   demoMode    = false;
+let   demoTimer   = null;
+let   btDevice    = null;
+let   btChar      = null;
+let   connected   = false;
+let   sessionStart= Date.now();
+let   sessionData = [];  // for CSV export
+let   lastBpm     = 0;
+let   lastBr      = 0;
+
+//=============================================================
+// CANVAS SETUP
+//=============================================================
+const waveCanvas  = document.getElementById('waveCanvas');
+const waveCtx     = waveCanvas.getContext('2d');
+const trendCanvas = document.getElementById('trendCanvas');
+const trendCtx    = trendCanvas.getContext('2d');
+
+function resizeCanvas() {
+  const wc = waveCanvas.parentElement;
+  waveCanvas.width  = wc.clientWidth;
+  waveCanvas.height = 160;
+  trendCanvas.width  = trendCanvas.parentElement.clientWidth;
+  trendCanvas.height = 90;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+//=============================================================
+// SESSION CLOCK
+//=============================================================
+setInterval(() => {
+  const s = Math.floor((Date.now() - sessionStart) / 1000);
+  const m = Math.floor(s / 60).toString().padStart(2,'0');
+  const sec = (s % 60).toString().padStart(2,'0');
+  document.getElementById('sessionClock').textContent = `${m}:${sec}`;
+}, 1000);
+
+//=============================================================
+// BLUETOOTH
+//=============================================================
+async function connectBluetooth() {
+  if (connected) { disconnectBT(); return; }
+
+  if (!navigator.bluetooth) {
+    addLog('Web Bluetooth not supported in this browser', 'warn');
+    addLog('Use Chrome/Edge on desktop or Android', 'info');
+    return;
+  }
+
+  try {
+    addLog('Scanning for SmartSteth_v2…', 'info');
+    btDevice = await navigator.bluetooth.requestDevice({
+      filters: [{ name: 'SmartSteth_v2' }],
+      optionalServices: ['0000ffe0-0000-1000-8000-00805f9b34fb']
+    });
+
+    const server  = await btDevice.gatt.connect();
+    const service = await server.getPrimaryService('0000ffe0-0000-1000-8000-00805f9b34fb');
+    btChar = await service.getCharacteristic('0000ffe1-0000-1000-8000-00805f9b34fb');
+
+    await btChar.startNotifications();
+    btChar.addEventListener('characteristicvaluechanged', onBTData);
+
+    setConnected(true);
+    addLog('Connected to SmartSteth_v2', 'info');
+    btDevice.addEventListener('gattserverdisconnected', () => {
+      setConnected(false);
+      addLog('Device disconnected', 'warn');
+    });
+  } catch(e) {
+    addLog('BT Error: ' + e.message, 'warn');
+  }
+}
+
+function disconnectBT() {
+  if (btDevice && btDevice.gatt.connected) btDevice.gatt.disconnect();
+  setConnected(false);
+}
+
+function setConnected(val) {
+  connected = val;
+  const btn = document.getElementById('connectBtn');
+  const dot = document.getElementById('statusDot');
+  const btst = document.getElementById('btStatus');
+  if (val) {
+    btn.textContent = '⬡ DISCONNECT'; btn.className = 'connect-btn connected';
+    dot.className = 'status-dot live';
+    btst.textContent = '● CONNECTED'; btst.style.color = 'var(--green)';
+  } else {
+    btn.textContent = '⬡ CONNECT BT'; btn.className = 'connect-btn';
+    dot.className = 'status-dot';
+    btst.textContent = '● DISCONNECTED'; btst.style.color = 'var(--muted)';
+  }
+}
+
+let btBuffer = '';
+function onBTData(event) {
+  const decoder = new TextDecoder('utf-8');
+  btBuffer += decoder.decode(event.target.value);
+  const lines = btBuffer.split('\n');
+  btBuffer = lines.pop();
+  lines.forEach(line => {
+    try {
+      const d = JSON.parse(line.trim());
+      processData(d);
+    } catch(e) {}
+  });
+}
+
+//=============================================================
+// PROCESS DATA PACKET
+//=============================================================
+function processData(d) {
+  const norm = (d.raw - 1400) / (3600 - 1400);
+  waveData.push(Math.max(0, Math.min(1, norm)));
+  if (waveData.length > 600) waveData.shift();
+
+  if (d.bpm && d.bpm !== lastBpm) {
+    lastBpm = d.bpm;
+    bpmHistory.push(d.bpm);
+    bpmHistory.shift();
+  }
+  if (d.br && d.br !== lastBr) {
+    lastBr = d.br;
+    brHistory.push(d.br);
+    brHistory.shift();
+  }
+
+  // Vitals
+  updateVital('bpmVal', d.bpm, 60, 100, 40, 150);
+  updateVital('brVal',  d.br,  12, 20,  8,  30);
+  updateVital('rmsVal', d.rms, 50, 400, 10, 600);
+  updateVital('hrvVal', d.hrv, 20, 80,  5,  200);
+  document.getElementById('rmsFooter').textContent = d.rms;
+  document.getElementById('rawVal').textContent    = d.raw;
+  document.getElementById('threshStat').textContent = '--';
+
+  // Peak counter
+  if (d.bpm > 0) {
+    peakCount++;
+    document.getElementById('peakStat').textContent = peakCount;
+  }
+
+  // Mode badge
+  document.getElementById('modeBadge').textContent = d.mode || 'SCAN';
+
+  // HRV ring
+  updateHRVRing(d.hrv);
+
+  // Diagnosis cards
+  updateDiagCard('heart', d.heart, d.cheart, d.heartDetail || '');
+  updateDiagCard('lung',  d.lung,  d.clung,  d.lungDetail  || '');
+  updateSimpleDiag('vasc', d.vasc);
+  updateSimpleDiag('abd',  d.abd);
+
+  // Signal bars
+  updateSigBars(d.rms);
+
+  // Spectrum (simulated from RMS)
+  updateSpectrum(d.rms, d.raw);
+
+  // avg bpm
+  const validBpm = bpmHistory.filter(v => v > 0);
+  if (validBpm.length > 0) {
+    document.getElementById('avgBpm').textContent =
+      Math.round(validBpm.reduce((a,b)=>a+b,0)/validBpm.length);
+  }
+
+  // Alert
+  if (d.alert) {
+    document.getElementById('alertBanner').classList.add('show');
+    setTimeout(() => document.getElementById('alertBanner').classList.remove('show'), 4000);
+    addLog('⚠ ALERT: ' + (d.heart !== 'NORM' ? d.heart : d.lung), 'alert');
+  }
+
+  // Session data for CSV
+  sessionData.push({
+    time: Math.floor((Date.now()-sessionStart)/1000),
+    raw:d.raw, rms:d.rms, bpm:d.bpm, br:d.br, hrv:d.hrv,
+    heart:d.heart, lung:d.lung, vasc:d.vasc, abd:d.abd, alert:d.alert
+  });
+  if (sessionData.length > 10000) sessionData.shift();
+}
+
+//=============================================================
+// UI HELPERS
+//=============================================================
+function updateVital(id, val, low, high, critLow, critHigh) {
+  const el = document.getElementById(id);
+  if (!val && val !== 0) { el.textContent = '--'; return; }
+  el.textContent = val;
+  el.className = 'vital-value';
+  if (val < critLow || val > critHigh) el.classList.add('crit');
+  else if (val < low || val > high)    el.classList.add('warn');
+}
+
+function updateDiagCard(organ, status, conf, detail) {
+  if (!status) return;
+  const card   = document.getElementById('diag' + capitalize(organ));
+  const statEl = document.getElementById(organ + 'Status');
+  const detEl  = document.getElementById(organ + 'Detail');
+  const confEl = document.getElementById(organ + 'Conf');
+  const confPct= document.getElementById(organ + 'ConfPct');
+
+  const isNorm = (status === 'NORM');
+  const critStatuses = ['BRADY+','TACHY+','ARRHY','ABS','STRID','ILEUS','OBSTR'];
+  const isCrit = critStatuses.includes(status);
+
+  card.className = 'diag-card ' + (isNorm ? 'normal' : isCrit ? 'critical' : 'abnormal');
+  statEl.textContent = status;
+  statEl.className   = 'diag-status ' + (isNorm ? 'norm' : isCrit ? 'crit' : 'warn');
+
+  if (detEl && detail) detEl.textContent = detail;
+
+  if (confEl && conf != null) {
+    const pct = Math.min(100, Math.max(0, conf));
+    confEl.style.width = pct + '%';
+    confEl.className = 'conf-fill ' + (pct >= 70 ? 'high' : pct >= 45 ? 'mid' : 'low');
+    if (confPct) confPct.textContent = pct + '%';
+  }
+}
+
+function updateSimpleDiag(organ, status) {
+  if (!status) return;
+  const statEl = document.getElementById(organ + 'Status');
+  if (!statEl) return;
+  const isNorm = status === 'NORM';
+  const isCrit = ['BRUIT','OBSTR'].includes(status);
+  statEl.textContent = status;
+  statEl.className   = 'diag-status ' + (isNorm ? 'norm' : isCrit ? 'crit' : 'warn');
+}
+
+function updateHRVRing(hrv) {
+  if (!hrv) return;
+  document.getElementById('hrvRingVal').textContent = hrv;
+  document.getElementById('hrvVal').textContent     = hrv;
+  const pct = Math.min(100, (hrv / 100) * 100);
+  const dash = 239 - (pct / 100) * 239;
+  document.getElementById('hrvCircle').style.strokeDashoffset = dash;
+
+  const label = hrv < 20 ? 'LOW' : hrv > 80 ? 'HIGH' : 'NORMAL';
+  const color = hrv < 20 ? 'var(--red)' : hrv > 80 ? 'var(--yellow)' : 'var(--green)';
+  document.getElementById('hrvLabel').textContent  = label;
+  document.getElementById('hrvLabel').style.color  = color;
+  document.getElementById('hrvCircle').style.stroke= color;
+}
+
+function updateSigBars(rms) {
+  const bars = document.getElementById('sigBars').children;
+  const level = Math.min(8, Math.floor((rms / 500) * 8));
+  for (let i = 0; i < 8; i++) {
+    const h = ((i + 1) / 8) * 28;
+    bars[i].style.height = h + 'px';
+    bars[i].style.background = i < level
+      ? (i < 3 ? 'var(--green)' : i < 6 ? 'var(--yellow)' : 'var(--red)')
+      : 'var(--border)';
+  }
+}
+
+function updateSpectrum(rms, raw) {
+  const bars = document.getElementById('spectrumBars').children;
+  for (let i = 0; i < 16; i++) {
+    const base = (rms / 500) * 50;
+    const h = Math.max(2, base * (0.4 + Math.random() * 0.8) * (1 - i * 0.04));
+    bars[i].style.height = Math.min(50, h) + 'px';
+    const pct = i / 16;
+    bars[i].style.background = `hsl(${185 + pct * 60}, 90%, 55%)`;
+  }
+}
+
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function addLog(msg, type = 'info') {
+  const s = Math.floor((Date.now()-sessionStart)/1000);
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  const log = document.getElementById('logBody');
+  const el = document.createElement('div');
+  el.className = 'log-entry';
+  el.innerHTML = `<span class="log-time">${m}:${sec}</span><span class="log-text ${type}">${msg}</span>`;
+  log.prepend(el);
+  if (log.children.length > 50) log.removeChild(log.lastChild);
+}
+
+//=============================================================
+// WAVE RENDERING
+//=============================================================
+function setWaveMode(mode, btn) {
+  waveMode = mode;
+  document.querySelectorAll('.wave-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function clearWave() {
+  waveData.fill(0.5);
+  peakCount = 0;
+  document.getElementById('peakStat').textContent = '0';
+}
+
+function drawWave() {
+  const W = waveCanvas.width, H = waveCanvas.height;
+  waveCtx.clearRect(0, 0, W, H);
+
+  // Background grid
+  waveCtx.strokeStyle = '#0a1929';
+  waveCtx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) {
+    waveCtx.beginPath(); waveCtx.moveTo(x,0); waveCtx.lineTo(x,H); waveCtx.stroke();
+  }
+  for (let y = 0; y < H; y += 20) {
+    waveCtx.beginPath(); waveCtx.moveTo(0,y); waveCtx.lineTo(W,y); waveCtx.stroke();
+  }
+
+  // Baseline
+  waveCtx.strokeStyle = '#0e3559';
+  waveCtx.lineWidth = 1;
+  waveCtx.beginPath(); waveCtx.moveTo(0,H/2); waveCtx.lineTo(W,H/2); waveCtx.stroke();
+
+  const visible = waveData.slice(-W);
+  const step = 1;
+
+  if (waveMode === 'bars') {
+    for (let i = 0; i < visible.length; i++) {
+      const x = i * step;
+      const yH = visible[i] * (H - 20) + 10;
+      const amp = Math.abs(yH - H/2);
+      const pct = amp / (H/2);
+      waveCtx.fillStyle = `rgba(0,${Math.floor(180+pct*75)},${Math.floor(200+pct*55)},${0.4+pct*0.5})`;
+      waveCtx.fillRect(x, Math.min(yH, H/2), step-1, Math.abs(yH - H/2));
+    }
+    return;
+  }
+
+  if (waveMode === 'dots') {
+    for (let i = 0; i < visible.length; i++) {
+      const x = i * step;
+      const y = visible[i] * (H-20) + 10;
+      const amp = Math.abs(y - H/2) / (H/2);
+      waveCtx.fillStyle = `rgba(0,${Math.floor(200+amp*55)},255,${0.4+amp*0.5})`;
+      waveCtx.beginPath();
+      waveCtx.arc(x, y, 1.5, 0, Math.PI*2);
+      waveCtx.fill();
+    }
+    return;
+  }
+
+  // LINE or FILL
+  waveCtx.beginPath();
+  for (let i = 0; i < visible.length; i++) {
+    const x = i * step;
+    const y = visible[i] * (H-20) + 10;
+    if (i === 0) waveCtx.moveTo(x, y);
+    else waveCtx.lineTo(x, y);
+  }
+
+  if (waveMode === 'fill') {
+    waveCtx.lineTo((visible.length-1)*step, H);
+    waveCtx.lineTo(0, H);
+    waveCtx.closePath();
+    const grad = waveCtx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, 'rgba(0,229,255,0.25)');
+    grad.addColorStop(1, 'rgba(0,229,255,0)');
+    waveCtx.fillStyle = grad;
+    waveCtx.fill();
+    waveCtx.beginPath();
+    for (let i = 0; i < visible.length; i++) {
+      const x = i * step;
+      const y = visible[i] * (H-20) + 10;
+      if (i === 0) waveCtx.moveTo(x, y);
+      else waveCtx.lineTo(x, y);
+    }
+  }
+
+  // Glow line
+  waveCtx.strokeStyle = 'rgba(0,229,255,0.18)';
+  waveCtx.lineWidth = 5;
+  waveCtx.stroke();
+
+  waveCtx.strokeStyle = '#00e5ff';
+  waveCtx.lineWidth = 1.5;
+  waveCtx.shadowColor = '#00e5ff';
+  waveCtx.shadowBlur = 6;
+  waveCtx.stroke();
+  waveCtx.shadowBlur = 0;
+
+  // Scan line
+  const scanX = ((Date.now() / 4) % W);
+  waveCtx.strokeStyle = 'rgba(0,229,255,0.12)';
+  waveCtx.lineWidth = 2;
+  waveCtx.beginPath();
+  waveCtx.moveTo(scanX, 0);
+  waveCtx.lineTo(scanX, H);
+  waveCtx.stroke();
+}
+
+//=============================================================
+// TREND CHART
+//=============================================================
+function drawTrend() {
+  const W = trendCanvas.width, H = trendCanvas.height;
+  trendCtx.clearRect(0, 0, W, H);
+
+  // grid
+  trendCtx.strokeStyle = '#0a1929';
+  trendCtx.lineWidth = 1;
+  for (let y = 0; y < H; y += H/4) {
+    trendCtx.beginPath(); trendCtx.moveTo(0,y); trendCtx.lineTo(W,y); trendCtx.stroke();
+  }
+
+  const drawLine = (data, color, min, max) => {
+    const valid = data.filter(v => v != null && v > 0);
+    if (valid.length < 2) return;
+    trendCtx.beginPath();
+    trendCtx.strokeStyle = color;
+    trendCtx.lineWidth = 1.5;
+    trendCtx.shadowColor = color;
+    trendCtx.shadowBlur = 4;
+    let first = true;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i] == null) continue;
+      const x = (i / (data.length-1)) * W;
+      const y = H - ((data[i] - min) / (max - min)) * H;
+      if (first) { trendCtx.moveTo(x, y); first = false; }
+      else trendCtx.lineTo(x, y);
+    }
+    trendCtx.stroke();
+    trendCtx.shadowBlur = 0;
+  };
+
+  drawLine(bpmHistory, '#00e5ff', 30, 180);
+  drawLine(brHistory,  '#00e676', 0,  40);
+
+  // labels
+  trendCtx.fillStyle = '#2a5573';
+  trendCtx.font = '9px Share Tech Mono';
+  trendCtx.fillText('180', 2, 10);
+  trendCtx.fillText('30',  2, H-2);
+}
+
+//=============================================================
+// DEMO MODE
+//=============================================================
+let demoPhase = 0;
+function toggleDemo() {
+  demoMode = !demoMode;
+  document.getElementById('demoBtn').textContent = demoMode ? 'STOP' : 'DEMO';
+  document.getElementById('demoBtn').style.color = demoMode ? 'var(--red)' : '';
+
+  if (demoMode) {
+    setConnected(true);
+    addLog('Demo mode started', 'info');
+    runDemo();
+  } else {
+    setConnected(false);
+    clearTimeout(demoTimer);
+    addLog('Demo mode stopped', 'warn');
+  }
+}
+
+function runDemo() {
+  if (!demoMode) return;
+
+  demoPhase += 0.08;
+
+  // Simulate ECG-like signal
+  const t = demoPhase;
+  let sig = 0.5;
+
+  // P wave
+  const mod = t % (60 / 72); // 72 bpm
+  if (mod < 0.05)  sig = 0.5 + 0.08 * Math.sin(mod / 0.05 * Math.PI);
+  // QRS complex
+  else if (mod < 0.07)  sig = 0.5 - 0.05;
+  else if (mod < 0.09)  sig = 0.5 + 0.45;
+  else if (mod < 0.11)  sig = 0.5 - 0.15;
+  else if (mod < 0.13)  sig = 0.5 - 0.02;
+  // T wave
+  else if (mod < 0.22)  sig = 0.5 + 0.12 * Math.sin((mod - 0.13) / 0.09 * Math.PI);
+  // Baseline noise
+  sig += (Math.random() - 0.5) * 0.015;
+
+  const raw = Math.round(sig * 2200 + 1400);
+
+  const bpmSim = 68 + Math.round(Math.sin(t * 0.1) * 4);
+  const brSim  = 16 + Math.round(Math.sin(t * 0.03) * 2);
+  const hrv    = 42 + Math.round(Math.sin(t * 0.05) * 18);
+
+  processData({
+    raw, rms: Math.round(80 + Math.abs(Math.sin(t)) * 120),
+    mode: 'HEART', bpm: bpmSim, br: brSim, hrv,
+    heart: 'NORM', lung: 'NORM', vasc: 'NORM', abd: 'NORM',
+    cheart: 88, clung: 82,
+    heartDetail: 'Normal sinus rhythm',
+    lungDetail: 'Clear lung fields',
+    alert: 0, sec: Math.floor((Date.now()-sessionStart)/1000)
+  });
+
+  // Push trend
+  bpmHistory.push(bpmSim); bpmHistory.shift();
+  brHistory.push(brSim);   brHistory.shift();
+  document.getElementById('avgBpm').textContent = bpmSim;
+
+  demoTimer = setTimeout(runDemo, 15);
+}
+
+//=============================================================
+// EXPORT CSV
+//=============================================================
+function exportCSV() {
+  if (sessionData.length === 0) { addLog('No data to export', 'warn'); return; }
+  const headers = Object.keys(sessionData[0]).join(',');
+  const rows    = sessionData.map(r => Object.values(r).join(',')).join('\n');
+  const csv     = headers + '\n' + rows;
+  const blob    = new Blob([csv], { type:'text/csv' });
+  const url     = URL.createObjectURL(blob);
+  const a       = document.createElement('a');
+  a.href = url; a.download = 'stethoscope_session.csv';
+  a.click(); URL.revokeObjectURL(url);
+  addLog('CSV exported — ' + sessionData.length + ' records', 'info');
+}
+
+//=============================================================
+// RENDER LOOP
+//=============================================================
+function renderLoop() {
+  drawWave();
+  drawTrend();
+  requestAnimationFrame(renderLoop);
+}
+renderLoop();
+
+// Initial log
+addLog('SmartSteth v2.0 ready', 'info');
+addLog('Connect via BT or press DEMO', 'norm');
+</script>
+</body>
+</html>
