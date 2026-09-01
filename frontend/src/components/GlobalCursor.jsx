@@ -11,14 +11,18 @@ export default function GlobalCursor() {
     if (!fine || reduced) return
     setEnabled(true)
 
+    // Keep default cursor visible, but prevent text selection
     document.documentElement.style.userSelect = 'none'
     document.documentElement.style.webkitUserSelect = 'none'
     document.body.style.userSelect = 'none'
     document.body.style.webkitUserSelect = 'none'
     const style = document.createElement('style')
     style.id = 'no-select-style'
-    style.textContent = `* { user-select: none !important; -webkit-user-select: none !important; -ms-user-select: none !important; } input, textarea, [contenteditable] { user-select: text !important; -webkit-user-select: text !important; } ::selection { background: transparent; }`
+    style.textContent = `* { user-select: none !important; -webkit-user-select: none !important; -ms-user-select: none !important; } input, textarea, [contenteditable] { user-select: text !important; -webkit-user-select: text !important; } ::selection { background: rgba(167,139,250,0.22); color: #fff; }`
     document.head.appendChild(style)
+    // Ensure default cursor remains visible (do NOT hide)
+    document.documentElement.style.cursor = 'auto'
+    document.body.style.cursor = 'auto'
     const preventSelect = (e) => {
       const t = e.target
       if (t.closest && t.closest('input, textarea, [contenteditable]')) return
