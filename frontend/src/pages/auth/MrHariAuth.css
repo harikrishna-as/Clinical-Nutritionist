@@ -18,12 +18,13 @@
 }
 .mrhari-auth .minion-container {
   position: absolute;
-  top: 24px;
+  top: -42px;
   left: 24px;
   width: 88px;
   height: 88px;
   z-index: 20;
   display: block;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));
 }
 .mrhari-auth .minion {
   position: absolute;
@@ -58,6 +59,8 @@
   border-radius: 15px;
   box-shadow: 0px 15px 20px rgba(255, 255, 255, 0.5);
   position: relative;
+  overflow: visible;
+  margin-top: 40px;
 }
 .mrhari-auth .wrapper .title {
   font-size: 35px;
