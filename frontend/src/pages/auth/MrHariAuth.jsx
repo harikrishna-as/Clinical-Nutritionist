@@ -21,7 +21,7 @@ export default function MrHariAuth({ initialMode = 'login' }) {
     return () => clearTimeout(t)
   }, [])
 
-  // minion eyes follow mouse, look away when password focused
+  // minion eyes at center of minion, follow mouse, look away when password focused
   useEffect(() => {
     const eyes = document.querySelectorAll('.mrhari-auth .eye')
     const onMove = (e) => {
@@ -29,7 +29,7 @@ export default function MrHariAuth({ initialMode = 'login' }) {
       const isPwFocused = document.activeElement === pw
       eyes.forEach((eye) => {
         if (isPwFocused) {
-          eye.style.transform = 'translate(-4px, -2px)'
+          eye.style.transform = 'translate(-50%, -50%) translate(-4px, -2px)'
         } else {
           const rect = eye.getBoundingClientRect()
           const ex = rect.left + rect.width / 2
@@ -40,10 +40,12 @@ export default function MrHariAuth({ initialMode = 'login' }) {
           const max = 3
           const d = Math.min(max, dist)
           const angle = Math.atan2(dy, dx)
-          eye.style.transform = `translate(${Math.cos(angle) * d}px, ${Math.sin(angle) * d}px)`
+          eye.style.transform = `translate(-50%, -50%) translate(${Math.cos(angle) * d}px, ${Math.sin(angle) * d}px)`
         }
       })
     }
+    // initialize centered
+    eyes.forEach((eye) => { eye.style.transform = 'translate(-50%, -50%)' })
     document.addEventListener('mousemove', onMove)
     return () => document.removeEventListener('mousemove', onMove)
   }, [mode])
