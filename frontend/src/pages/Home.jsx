@@ -139,19 +139,6 @@ export default function Home() {
           >
             <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} />
           </div>
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: '42%',
-              background: 'linear-gradient(90deg, rgba(5,5,8,0.96) 0%, rgba(5,5,8,0.62) 38%, transparent 100%)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              pointerEvents: 'none',
-            }}
-          />
         </motion.div>
         <motion.div className="hero-shade" style={{ opacity: heroFade, position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }} />
 

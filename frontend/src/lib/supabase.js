@@ -3,13 +3,19 @@ import { createClient } from '@supabase/supabase-js'
 const url = import.meta.env.VITE_SUPABASE_URL || ''
 const anon = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 
+const isPlaceholder = (v) => !v || v.includes('placeholder') || v.includes('your-') || v.length < 20 || !v.startsWith('eyJ')
 let supabase = null
-if (url && anon) {
-  supabase = createClient(url, anon, {
-    auth: { persistSession: true, autoRefreshToken: true },
-  })
+if (url && anon && !isPlaceholder(anon) && !isPlaceholder(url) && url.startsWith('http')) {
+  try {
+    supabase = createClient(url, anon, {
+      auth: { persistSession: true, autoRefreshToken: true },
+    })
+  } catch (e) {
+    console.warn('[supabase] createClient failed, falling back to localStorage', e)
+    supabase = null
+  }
 } else {
-  console.warn('[supabase] VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY not set — falling back to localStorage mock. Set them in Vercel Env to enable 24/7 cloud.')
+  console.warn('[supabase] VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY not set or placeholder — falling back to localStorage mock. Set real keys in Vercel Env (Supabase Dashboard → Settings → API → anon public) to enable 24/7 cloud.')
 }
 
 export { supabase }
