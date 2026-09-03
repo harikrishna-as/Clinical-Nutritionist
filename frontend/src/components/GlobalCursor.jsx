@@ -38,7 +38,7 @@ export default function GlobalCursor() {
     const onMove = (e) => {
       mx = e.clientX; my = e.clientY
       if (!visible) { visible = true; if (dot) dot.style.opacity = '1'; if (ring) ring.style.opacity = '1' }
-      const isInteractive = e.target.closest('a, button, input, select, textarea, label, .card')
+      const isInteractive = e.target?.closest?.('a, button, input, select, textarea, label, .card')
       if (ring) ring.style.transform = `translate3d(${mx}px, ${my}px, 0) ${isInteractive ? 'scale(1.5)' : 'scale(1)'}`
       if (dot) dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`
     }
@@ -46,8 +46,8 @@ export default function GlobalCursor() {
     const loop = () => {
       rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18
       if (ring) {
-        const cur = ring.style.transform
-        const scale = cur.match(/scale\([^)]+\)/)?.[0] || 'scale(1)'
+        const cur = ring.style.transform || ''
+        const scale = (cur.match(/scale\([^)]+\)/) || [])[0] || 'scale(1)'
         ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) ${scale}`
       }
       raf = requestAnimationFrame(loop)

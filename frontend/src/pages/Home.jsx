@@ -62,22 +62,9 @@ export default function Home() {
   const navigate = useNavigate()
   useEffect(() => { api.overview().then(setOverview).catch(() => setOverview(null)) }, [])
   useEffect(() => { api.datasets().then((r) => setDatasetCount(r.datasets?.length ?? null)).catch(() => {}) }, [])
-  const [splineOn, setSplineOn] = useState(false)
   useEffect(() => {
     const t = setTimeout(() => setIsLoading(false), 900)
     return () => clearTimeout(t)
-  }, [])
-  useEffect(() => {
-    let idle = null
-    let timer = null
-    const enable = () => setSplineOn(true)
-    try {
-      const lowMem = (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2)
-      if (lowMem) return
-    } catch {}
-    if ('requestIdleCallback' in window) idle = window.requestIdleCallback(enable, { timeout: 2500 })
-    else timer = setTimeout(enable, 1500)
-    return () => { try { idle && window.cancelIdleCallback(idle) } catch {} clearTimeout(timer) }
   }, [])
 
   // Hero scroll — content drifts, Spline grows and stops at Marquee
@@ -150,10 +137,9 @@ export default function Home() {
               minWidth: 480,
               transform: 'translateY(-50%)',
               transformOrigin: 'center right',
+              background: 'radial-gradient(600px 500px at 60% 50%, rgba(107,124,255,0.16), transparent 65%), radial-gradient(400px 380px at 80% 70%, rgba(167,139,250,0.10), transparent 65%)',
             }}
-          >
-            {splineOn ? <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} /> : null}
-          </div>
+          />
         </div>
         <motion.div className="hero-shade" style={{ opacity: heroFade, position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }} />
 
