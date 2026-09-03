@@ -91,12 +91,13 @@ function SplineViewer({ scene, style, className }) {
     window.addEventListener('webglcontextlost', onContextLost)
     window.addEventListener('webglcontextlost', onContextLost, true)
 
+    // Use stable 1.10.57 without Hana (2.0.10 has Hana wasm bug + WebGPU OOM)
     const loadViewerScript = () => {
       if (customElements.get('spline-viewer')) return Promise.resolve(true)
       return new Promise((resolve) => {
         const s = document.createElement('script')
         s.type = 'module'
-        s.src = 'https://cdn.spline.design/@splinetool/viewer@2.0.10/build/spline-viewer.js'
+        s.src = 'https://unpkg.com/@splinetool/viewer@1.10.57/build/spline-viewer.js'
         s.onload = () => resolve(true)
         s.onerror = () => resolve(false)
         document.head.appendChild(s)
