@@ -62,9 +62,22 @@ export default function Home() {
   const navigate = useNavigate()
   useEffect(() => { api.overview().then(setOverview).catch(() => setOverview(null)) }, [])
   useEffect(() => { api.datasets().then((r) => setDatasetCount(r.datasets?.length ?? null)).catch(() => {}) }, [])
+  const [splineOn, setSplineOn] = useState(false)
   useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 3600)
+    const t = setTimeout(() => setIsLoading(false), 900)
     return () => clearTimeout(t)
+  }, [])
+  useEffect(() => {
+    let idle = null
+    let timer = null
+    const enable = () => setSplineOn(true)
+    try {
+      const lowMem = (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2)
+      if (lowMem) return
+    } catch {}
+    if ('requestIdleCallback' in window) idle = window.requestIdleCallback(enable, { timeout: 2500 })
+    else timer = setTimeout(enable, 1500)
+    return () => { try { idle && window.cancelIdleCallback(idle) } catch {} clearTimeout(timer) }
   }, [])
 
   // Hero scroll — content drifts, Spline grows and stops at Marquee
@@ -86,27 +99,30 @@ export default function Home() {
 
   return (
     <div style={{ position: 'relative', background: '#050508' }}>
-      {/* ==== Minimal loader — only LOADING, no black block ==== */}
+      {/* ==== Minimal loader — only LOADING, no black block — does not hide page ==== */}
       <AnimatePresence>
         {isLoading && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
             style={{
               position: 'fixed',
-              inset: 0,
+              top: 24,
+              left: '50%',
+              transform: 'translateX(-50%)',
               zIndex: 9999,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: 'rgba(5,5,8,0.72)',
-              backdropFilter: 'blur(6px)',
-              WebkitBackdropFilter: 'blur(6px)',
+              background: 'rgba(15,23,42,0.82)',
+              border: '1px solid rgba(148,163,184,0.18)',
+              padding: '8px 18px',
+              borderRadius: 999,
               pointerEvents: 'none',
             }}
           >
-            <div style={{ fontSize: 20, letterSpacing: 10, color: '#fff', fontWeight: 800, fontFamily: 'Sora, sans-serif' }}>LOADING</div>
+            <div style={{ fontSize: 12, letterSpacing: 6, color: '#fff', fontWeight: 800, fontFamily: 'Sora, sans-serif' }}>LOADING</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -114,7 +130,7 @@ export default function Home() {
 
       {/* ==== Hero — Spline slight left blur, stops at Marquee, grows on scroll ==== */}
       <section className="home-hero" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh', background: '#050508' }}>
-        <motion.div
+        <div
           className="hero-3d-bg"
           style={{
             position: 'absolute',
@@ -122,24 +138,23 @@ export default function Home() {
             zIndex: 0,
             pointerEvents: 'none',
             overflow: 'hidden',
-            scale: heroSplineScale,
           }}
         >
           <div
             style={{
               position: 'absolute',
-              right: '-12%',
+              right: '0%',
               top: '50%',
-              width: '88%',
-              height: '158%',
-              minWidth: 640,
+              width: '60%',
+              height: '110%',
+              minWidth: 480,
               transform: 'translateY(-50%)',
               transformOrigin: 'center right',
             }}
           >
-            <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} />
+            {splineOn ? <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} /> : null}
           </div>
-        </motion.div>
+        </div>
         <motion.div className="hero-shade" style={{ opacity: heroFade, position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }} />
 
         <div className="container hero-content">
@@ -151,10 +166,10 @@ export default function Home() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
-              style={{ fontSize: 'clamp(38px, 6vw, 60px)', lineHeight: 1.08, fontWeight: 700, marginBottom: 20, letterSpacing: '-0.025em', fontFamily: 'Sora, sans-serif' }}
+              style={{ fontSize: 'clamp(38px, 6vw, 60px)', lineHeight: 1.08, fontWeight: 700, marginBottom: 20, letterSpacing: '-0.025em', fontFamily: 'Sora, sans-serif', color: '#F8FAFC' }}
             >
               Clinical Nutrition Decisions,<br />
-              <span className="gradient-text">Verified by ML Models</span>
+              <span style={{ color: '#fff', fontWeight: 700 }}>Clinical Nutritionist</span>
             </motion.h1>
             <motion.p className="hero-sub" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.3 }}>
               We run patient data — labs, vitals, ward and history — through 21 trained ML models. The models compute the nutrition plan and every factor is shown for clinical verification.
