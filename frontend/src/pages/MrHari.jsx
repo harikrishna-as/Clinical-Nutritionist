@@ -17,7 +17,7 @@ export default function MrHari() {
     <div className="page" style={{ background: '#000000', minHeight: '100vh' }}>
       <section className="page-hero" style={{ background: '#000000', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <div className="container">
-          <h1 style={{ color: '#fff' }}>Mr.Hari <span className="gradient-text">Folder</span></h1>
+          <h1 style={{ color: '#fff' }}>{user?.name ? `${user.name}'s` : 'My'} <span className="gradient-text">Folder</span></h1>
           <p style={{ color: '#94A3B8', maxWidth: 640 }}>Private black folder — profile, saved assessments and personal notes. Background is pure black as requested.</p>
         </div>
       </section>

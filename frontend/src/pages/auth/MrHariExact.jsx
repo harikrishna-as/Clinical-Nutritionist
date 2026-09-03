@@ -1,6 +1,24 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 export default function MrHariExact() {
+  const { login } = useAuth()
+  const nav = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [err, setErr] = useState('')
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setErr('')
+    try {
+      await login(email.trim(), password)
+      nav('/mr-hari')
+    } catch (ex) {
+      setErr(ex.message || 'Login failed')
+    }
+  }
   useEffect(() => {
     // Eye tracking + password focus + loader — exactly as pasted
     const onMove = (e) => {
@@ -93,13 +111,13 @@ export default function MrHariExact() {
       </div>
       <div className="wrapper">
         <div className="title">Login</div>
-        <form action="#" onSubmit={(e) => e.preventDefault()}>
+        <form action="#" onSubmit={handleLogin}>
           <div className="field">
-            <input type="text" required />
+            <input type="text" required value={email} onChange={(e) => setEmail(e.target.value)} />
             <label>Email Address</label>
           </div>
           <div className="field">
-            <input type="password" required />
+            <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
             <label>Password</label>
           </div>
           <div className="content">
@@ -111,6 +129,7 @@ export default function MrHariExact() {
               <a href="/forgot-password">Forgot password?</a>
             </div>
           </div>
+          {err && <div style={{ color: '#ef4444', fontSize: 13, textAlign: 'center', marginTop: 10 }}>{err}</div>}
           <div className="field">
             <input type="submit" value="Login" />
           </div>

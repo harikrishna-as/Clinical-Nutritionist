@@ -175,7 +175,7 @@ useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 30))
               </>
             ) : (
               <>
-                <Link to="/mr-hari" className="nav-link" title="Mr.Hari Folder" style={{ background: '#000', border: '1px solid rgba(255,255,255,0.12)', fontSize: 13, fontWeight: 600 }}>Mr.Hari</Link>
+                <Link to="/mr-hari" className="nav-link" title={`${user?.name || 'My'} Folder`} style={{ background: '#000', border: '1px solid rgba(255,255,255,0.12)', fontSize: 13, fontWeight: 600 }}>{user?.name ? `${user.name.split(' ')[0]}'s Folder` : 'My Folder'}</Link>
                 <div className="nav-item" ref={profileRef} style={{ position: 'relative' }}>
                   <button onClick={() => setProfileOpen(!profileOpen)} aria-label="profile" style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(167,139,250,0.6)', padding: 0, display: 'grid', placeItems: 'center', background: '#0F172A', cursor: 'pointer' }}>
                     {user?.profilePic || localStorage.getItem('cn_dss_profile_pic') ? <img src={user?.profilePic || localStorage.getItem('cn_dss_profile_pic')} alt="profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={18} color="#A78BFA" />}
@@ -194,7 +194,7 @@ useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 30))
                       <div style={{ padding: 8 }}>
                         <Link to="/profile-settings" onClick={() => setProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, color: '#E2E8F0', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}><User size={16} /> Profile Settings</Link>
                         <Link to="/account" onClick={() => setProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, color: '#E2E8F0', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}><Building2 size={16} /> Account Settings</Link>
-                        <Link to="/mr-hari" onClick={() => setProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, color: '#E2E8F0', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}><span style={{ width: 16, height: 16, borderRadius: 4, background: '#000', border: '1px solid rgba(255,255,255,0.15)', display: 'inline-block' }} /> Mr.Hari Folder</Link>
+                        <Link to="/mr-hari" onClick={() => setProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, color: '#E2E8F0', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}><span style={{ width: 16, height: 16, borderRadius: 4, background: '#000', border: '1px solid rgba(255,255,255,0.15)', display: 'inline-block' }} /> {user?.name ? `${user.name.split(' ')[0]}'s Folder` : 'My Folder'}</Link>
                         <div style={{ height: 1, background: 'rgba(148,163,184,0.12)', margin: '8px 0' }} />
                         <button onClick={() => { setProfileOpen(false); logout() }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(239,68,68,0.08)', color: '#F87171', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}><X size={16} /> Logout</button>
                       </div>
@@ -243,7 +243,7 @@ useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 30))
             </>
           ) : (
             <>
-              <Link to="/mr-hari" className="mobile-link small">Mr.Hari Folder</Link>
+              <Link to="/mr-hari" className="mobile-link small">{user?.name ? `${user.name.split(' ')[0]}'s Folder` : 'My Folder'}</Link>
               <Link to="/account" className="mobile-link small">Account Settings</Link>
               <button onClick={logout} className="mobile-link small" style={{ background: 'none', border: 'none', textAlign: 'left', width: '100%', color: '#94A3B8' }}>Logout</button>
             </>
