@@ -59,7 +59,26 @@ import SessionExpired from './pages/ux/SessionExpired'
 import '@fontsource-variable/geist'
 import './index.css'
 
+class RootErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null } }
+  static getDerivedStateFromError(error) { return { error } }
+  componentDidCatch(error, info) { console.error('[Root]', error, info) }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ background: '#050508', color: '#fff', minHeight: '100vh', padding: 32, fontFamily: 'sans-serif' }}>
+          <h1 style={{ fontSize: 22 }}>Something went wrong</h1>
+          <p style={{ color: '#94A3B8', fontSize: 14 }}>{String(this.state.error?.message || this.state.error)}</p>
+          <a href="/" style={{ color: '#A78BFA' }}>Go Home</a>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
+  <RootErrorBoundary>
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
@@ -123,4 +142,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
+  </RootErrorBoundary>
 )
