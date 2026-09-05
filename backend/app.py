@@ -17,7 +17,12 @@ from flask_cors import CORS
 BASE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE)
 DATASETS_ROOT = os.path.dirname(PROJECT_ROOT)
-AI_ROOT = os.path.join(DATASETS_ROOT, "Explainable_Clinical_Nutrition_AI")
+# AI output may live inside the project (NutritionAI_Website/Explainable_...) or beside it
+_candidates = [
+    os.path.join(PROJECT_ROOT, "Explainable_Clinical_Nutrition_AI"),
+    os.path.join(DATASETS_ROOT, "Explainable_Clinical_Nutrition_AI"),
+]
+AI_ROOT = next((c for c in _candidates if os.path.isdir(c)), _candidates[0])
 
 sys.path.insert(0, AI_ROOT)
 sys.path.insert(0, os.path.join(BASE, "services"))

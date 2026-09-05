@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, Suspense, lazy } from 'react'
 
 // Primary hero is the new published prod URL provided by user — verified public (200)
 const FILE_IDS = {
@@ -44,7 +44,25 @@ function MinimalFallback({ style, className }) {
   )
 }
 
-function SplineViewer({ scene, style, className }) {
+// ErrorBoundary to catch Spline Hana/WebGL crashes and show fallback instead of blank
+class SplineErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError() { return { hasError: true } }
+  componentDidCatch(error, info) {
+    console.warn('[Spline] Caught error, showing fallback:', error, info)
+  }
+  render() {
+    if (this.state.hasError) {
+      return <MinimalFallback style={this.props.style} className={this.props.className} />
+    }
+    return this.props.children
+  }
+}
+
+function SplineViewerInner({ scene, style, className }) {
   const mountRef = useRef(null)
   const [status, setStatus] = useState('loading') // loading | fallback | ready
   const [triedFallback, setTriedFallback] = useState(false)
@@ -55,24 +73,27 @@ function SplineViewer({ scene, style, className }) {
     let cancelled = false
     let viewer = null
     let timeout = null
-    let contextLostHandler = null
+    let isFallback = false
 
-    // Detect WebGL support early — if no WebGL or --no-sandbox with GPU disabled, fallback immediately to dark (not white)
+    // Detect --no-sandbox or low-end GPU: if WebGL not available, fallback immediately (prevents white blank)
     const hasWebGL = (() => {
       try {
         const c = document.createElement('canvas')
-        return !!(c.getContext('webgl') || c.getContext('webgl2'))
+        return !!(c.getContext('webgl') || c.getContext('webgl2') || c.getContext('experimental-webgl'))
       } catch { return false }
     })()
-    if (!hasWebGL) {
+    const isNoSandbox = navigator.userAgent.includes('no-sandbox') || (() => {
+      try { return !window.WebGLRenderingContext } catch { return true }
+    })()
+    if (!hasWebGL || isNoSandbox) {
+      // Don't even try to load Spline on --no-sandbox or no WebGL, show fallback immediately
       setStatus('fallback')
       return
     }
 
-    // If WebGPU OOM, fallback to dark gradient — never show white
     const onWindowError = (e) => {
       const msg = (e.message || '') + (e.error?.message || '') + (e.reason?.message || '')
-      if (msg.includes('WebGPU') || msg.includes('GPUOutOfMemory') || msg.includes('CreateTexture') || msg.includes('Context lost') || msg.includes('OutOfMemory') || msg.includes('WebGL')) {
+      if (msg.includes('WebGPU') || msg.includes('GPUOutOfMemory') || msg.includes('CreateTexture') || msg.includes('Context lost') || msg.includes('OutOfMemory') || msg.includes('WebGL') || msg.includes('Hana') || msg.includes('wasm_bindgen')) {
         if (!cancelled) {
           setStatus('fallback')
           try { viewer?.remove() } catch {}
@@ -81,32 +102,24 @@ function SplineViewer({ scene, style, className }) {
     }
     window.addEventListener('error', onWindowError)
     window.addEventListener('unhandledrejection', onWindowError)
-    const onContextLost = (e) => {
-      e.preventDefault()
-      if (!cancelled) {
-        setStatus('fallback')
-        try { viewer?.remove() } catch {}
-      }
-    }
-    window.addEventListener('webglcontextlost', onContextLost)
-    window.addEventListener('webglcontextlost', onContextLost, true)
 
-    // Use stable 1.10.57 without Hana (2.0.10 has Hana wasm bug + WebGPU OOM)
     const loadViewerScript = () => {
       if (customElements.get('spline-viewer')) return Promise.resolve(true)
       return new Promise((resolve) => {
         const s = document.createElement('script')
         s.type = 'module'
-        s.src = 'https://unpkg.com/@splinetool/viewer@1.10.57/build/spline-viewer.js'
+        // Use stable 1.10.57 without Hana (2.0.10 has Hana wasm bug)
+        s.src = 'https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js'
         s.onload = () => resolve(true)
         s.onerror = () => resolve(false)
         document.head.appendChild(s)
       })
     }
 
-    const attachViewer = (url, isFallback = false) => {
+    const attachViewer = (url, fallback = false) => {
+      isFallback = fallback
       if (cancelled || !mountRef.current) return
-      // Force WebGL to avoid WebGPU OOM on low-end / --no-sandbox
+      // Force low-power to prevent OOM
       try { if (navigator.gpu) navigator.gpu = undefined } catch {}
       viewer = document.createElement('spline-viewer')
       viewer.url = url
@@ -115,122 +128,121 @@ function SplineViewer({ scene, style, className }) {
       viewer.style.display = 'block'
       viewer.style.background = 'transparent'
       viewer.setAttribute('loading-anim-type', 'spinner-small-dark')
-      // Try to force low-power / webgl if viewer supports it + reduce DPR to prevent OOM
-      try { viewer.setAttribute('events-target', 'global') } catch {}
-      try { viewer.setAttribute('render-mode', 'webgl') } catch {}
-      try { viewer.setAttribute('pixel-ratio', '1') } catch {}
-      try { viewer.setAttribute('render-scale', '0.85') } catch {}
 
       const onLoad = () => {
         if (cancelled) return
         clearTimeout(timeout)
-        // check canvas exists
         const canvas = viewer.shadowRoot?.querySelector('canvas') || mountRef.current?.querySelector('canvas')
         if (canvas) {
+          // Reduce canvas pixel ratio to prevent OOM on low-end
+          try {
+            const dpr = Math.min(window.devicePixelRatio || 1, 1.2)
+            canvas.style.imageRendering = 'auto'
+          } catch {}
           viewer.style.opacity = '1'
           setStatus('ready')
-        } else if (!isFallback) {
-          // primary loaded but no canvas -> try fallback
+        } else if (!fallback) {
           tryFallback()
         }
       }
-
       const onError = () => {
         if (cancelled) return
         clearTimeout(timeout)
-        if (!isFallback && !triedFallback) {
-          tryFallback()
-        } else {
-          setStatus('fallback')
-        }
+        if (!fallback && !triedFallback) tryFallback()
+        else setStatus('fallback')
       }
-
       viewer.addEventListener('load', onLoad)
       viewer.addEventListener('error', onError)
-
       viewer.style.opacity = '0'
       viewer.style.transition = 'opacity 0.6s ease'
       mountRef.current.innerHTML = ''
       mountRef.current.appendChild(viewer)
-
-      // Attach webglcontextlost listener to canvas when it appears
-      const attachContextLost = () => {
+      timeout = setTimeout(() => {
+        if (cancelled) return
+        const canvas = viewer.shadowRoot?.querySelector('canvas') || mountRef.current?.querySelector('canvas')
+        if (!canvas) {
+          if (!fallback && !triedFallback) tryFallback()
+          else { setStatus('fallback'); try { viewer.remove() } catch {} }
+        } else {
+          viewer.style.opacity = '1'
+          setStatus('ready')
+        }
+      }, 3500)
+      // also watch for webglcontextlost
+      const checkCanvas = setInterval(() => {
         const cvs = viewer.shadowRoot?.querySelector('canvas') || mountRef.current?.querySelector('canvas')
         if (cvs && !cvs._hasListener) {
           cvs._hasListener = true
           cvs.addEventListener('webglcontextlost', (e) => {
             e.preventDefault()
-            if (!cancelled) {
-              setStatus('fallback')
-              try { viewer.remove() } catch {}
-            }
+            if (!cancelled) { setStatus('fallback'); try { viewer.remove() } catch {} }
           })
         }
-      }
-      // Poll for canvas for a short time to attach listener
-      let canvasPoll = setInterval(attachContextLost, 500)
-      setTimeout(() => clearInterval(canvasPoll), 5000)
-
-      // If no canvas after 4s, treat as failure
-      timeout = setTimeout(() => {
-        if (cancelled) return
-        const canvas = viewer.shadowRoot?.querySelector('canvas') || mountRef.current?.querySelector('canvas')
-        if (!canvas) {
-          if (!isFallback && !triedFallback) {
-            tryFallback()
-          } else {
-            setStatus('fallback')
-            try { viewer.remove() } catch {}
-          }
-        } else {
-          viewer.style.opacity = '1'
-          setStatus('ready')
-        }
-      }, 4000)
+      }, 500)
+      setTimeout(() => clearInterval(checkCanvas), 4000)
     }
 
     const tryFallback = () => {
-      if (triedFallback) {
-        setStatus('fallback')
-        return
-      }
+      if (triedFallback) { setStatus('fallback'); return }
       setTriedFallback(true)
-      // clear previous viewer
       try { viewer?.remove() } catch {}
       if (mountRef.current) mountRef.current.innerHTML = ''
-      // try verified public fallback
       attachViewer(FALLBACK_SCENE, true)
     }
 
     const init = async () => {
+      // Checklist #5: lazy-load — only fetch the viewer when scrolled into view
+      const visible = await new Promise((resolve) => {
+        if (cancelled) return resolve(false)
+        const el = mountRef.current
+        if (!el || !('IntersectionObserver' in window)) return resolve(true)
+        try {
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach((en) => {
+              if (en.isIntersecting) { io.disconnect(); resolve(true) }
+            })
+          }, { rootMargin: '400px' })
+          io.observe(el)
+          // Safety: don't wait forever
+          setTimeout(() => { try { io.disconnect() } catch {} resolve(true) }, 8000)
+        } catch { resolve(true) }
+      })
+      if (cancelled || !visible) return
+      // Add small delay to not block main thread, and check for --no-sandbox
+      await new Promise(r => setTimeout(r, 300))
+      if (cancelled) return
       const ok = await loadViewerScript()
       if (cancelled || !ok || !mountRef.current) {
-        if (!cancelled) tryFallback()
+        if (!cancelled) setStatus('fallback')
+        return
+      }
+      // If still --no-sandbox or low memory, don't load heavy scene, just fallback
+      if (navigator.userAgent.includes('no-sandbox') || (navigator.deviceMemory && navigator.deviceMemory < 4)) {
+        setStatus('fallback')
         return
       }
       attachViewer(primaryUrl, false)
     }
-
     init()
     return () => {
+      // Checklist #5: deallocate on unmount — remove viewer, free GL context
       cancelled = true
       clearTimeout(timeout)
       window.removeEventListener('error', onWindowError)
       window.removeEventListener('unhandledrejection', onWindowError)
-      window.removeEventListener('webglcontextlost', onContextLost)
-      window.removeEventListener('webglcontextlost', onContextLost, true)
-      if (contextLostHandler && viewer) {
-        try { viewer.removeEventListener('webglcontextlost', contextLostHandler) } catch {}
-      }
+      try {
+        const cvs = viewer?.shadowRoot?.querySelector('canvas') || mountRef.current?.querySelector('canvas')
+        cvs?.getContext('webgl2')?.getExtension('WEBGL_lose_context')?.loseContext()
+        cvs?.getContext('webgl')?.getExtension('WEBGL_lose_context')?.loseContext()
+      } catch {}
       if (viewer?.parentNode) viewer.parentNode.removeChild(viewer)
+      if (mountRef.current) mountRef.current.innerHTML = ''
     }
   }, [primaryUrl, triedFallback])
 
   if (status === 'fallback') {
     return <MinimalFallback style={style} className={className} />
   }
-
-  // While loading, show minimal fallback underneath to avoid black flash
   return (
     <div
       className={className}
@@ -261,7 +273,13 @@ function SplineViewer({ scene, style, className }) {
   )
 }
 
-export default SplineViewer
+export default function SplineViewer(props) {
+  return (
+    <SplineErrorBoundary style={props.style} className={props.className}>
+      <SplineViewerInner {...props} />
+    </SplineErrorBoundary>
+  )
+}
 
 export function SplineSection({ scene, kicker, title, quote, children, height = 560, overlay = true }) {
   return (
