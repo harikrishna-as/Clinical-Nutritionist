@@ -36,9 +36,6 @@ function DeckCard({ d, index, count, target }) {
         <span className="cine-card__ghost">{num}</span>
         <div className="cine-card__glow" style={{ background: `radial-gradient(circle at 20% 10%, ${d.color}4d, transparent 55%)` }} />
         <div className="cine-card__left">
-          <span className="cine-card__ico" style={{ background: `${d.color}1f`, color: d.color, boxShadow: `0 0 60px ${d.color}30`, overflow: 'hidden', padding: d.logo ? 0 : undefined }}>
-            {d.logo ? <img src={d.logo} alt={`${d.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <Icon size={40} strokeWidth={1.6} />}
-          </span>
           <span className="cine-card__code" style={{ color: d.color }}>{d.name}</span>
           <h2 className="cine-card__name">{d.full}</h2>
           <p className="cine-card__tagline">{d.tagline}</p>
@@ -92,7 +89,7 @@ export default function DeptDeck({ departments = [] }) {
           const Icon = ICONS[d.icon] || Activity
           return (
             <Link key={d.slug} to={`/departments/${d.slug}`} className="dept-card">
-              <span className="dept-card-ico" style={{ background: `${d.color}1f`, color: d.color, overflow: 'hidden', padding: d.logo ? 0 : undefined }}>{d.logo ? <img src={d.logo} alt={`${d.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <Icon size={26} />}</span>
+
               <div className="dept-card-code" style={{ color: d.color }}>{d.name}</div>
               <h3>{d.full}</h3>
               <p>{d.tagline}</p>

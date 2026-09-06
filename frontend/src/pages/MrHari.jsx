@@ -1,15 +1,26 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import Avatar from '../components/Avatar'
 import ProfilePicture from '../components/ProfilePicture'
-import MrHariAuth from './auth/MrHariAuth'
 
 export default function MrHari() {
   const { user, isAuthenticated } = useAuth()
 
-  // Not authenticated → show the exact Mr.Hari login from your HTML (now combined)
+  // Not authenticated → clean prompt directing to login (home stays public)
   if (!isAuthenticated) {
-    return <MrHariAuth initialMode="login" />
+    return (
+      <div className="page" style={{ background: '#000000', minHeight: '80vh', display: 'grid', placeItems: 'center' }}>
+        <div className="card" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.1)', maxWidth: 480, textAlign: 'center' }}>
+          <h3 style={{ color: '#fff' }}>Please log in</h3>
+          <p style={{ color: '#94A3B8', fontSize: 14, margin: '10px 0 18px' }}>Your personal folder unlocks after login.</p>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+            <Link to="/login" className="btn btn-primary btn-sm">Login</Link>
+            <Link to="/register" className="btn btn-ghost btn-sm">Sign up</Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // Authenticated → show black folder with profile
@@ -17,7 +28,7 @@ export default function MrHari() {
     <div className="page" style={{ background: '#000000', minHeight: '100vh' }}>
       <section className="page-hero" style={{ background: '#000000', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <div className="container">
-          <h1 style={{ color: '#fff' }}>{user?.name ? `${user.name}'s` : 'My'} <span className="gradient-text">Folder</span></h1>
+          <h1 style={{ color: '#fff' }}>{user?.name ? `${user.name}'s` : 'My'} <span style={{ color: '#fff' }}>Folder</span></h1>
           <p style={{ color: '#94A3B8', maxWidth: 640 }}>Private black folder — profile, saved assessments and personal notes. Background is pure black as requested.</p>
         </div>
       </section>
@@ -25,7 +36,7 @@ export default function MrHari() {
         <div className="container" style={{ display: 'grid', gap: 20, maxWidth: 900 }}>
           <div className="card" style={{ background: '#000000', border: '1px solid rgba(255,255,255,0.12)', display: 'grid', gap: 16, justifyItems: 'center' }}>
             <div style={{ display: 'flex', gap: 16, alignItems: 'center', width: '100%', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <ProfilePicture size={120} />
+              <Avatar user={user} size={120} style={{ border: '2px solid rgba(148,163,184,0.25)' }} />
               <div style={{ textAlign: 'left' }}>
                 <div style={{ fontWeight: 800, color: '#fff', fontSize: 18 }}>{user.name}</div>
                 <div style={{ color: '#A78BFA', fontSize: 13 }}>@{user.username}</div>

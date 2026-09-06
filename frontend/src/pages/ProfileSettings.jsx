@@ -1,38 +1,48 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
+import { Check, AlertCircle, Upload, Trash2, Camera } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
-import { Camera, Upload, Trash2, Check, X, AlertCircle, User } from 'lucide-react'
+import Avatar from '../components/Avatar'
+import './auth/Auth.css'
+
+const ACCEPT = '.jpg,.jpeg,.png,image/jpeg,image/png'
+const MAX_BYTES = 5 * 1024 * 1024
 
 export default function ProfileSettings() {
   const { user, updateProfile, checkUsernameAvailable } = useAuth()
-  const nav = useNavigate()
   const fileRef = useRef(null)
-  const [fullName, setFullName] = useState(user?.name || '')
-  const [username, setUsername] = useState(user?.username || '')
-  const [email] = useState(user?.email || '')
-  const [avatar, setAvatar] = useState(user?.profilePic || localStorage.getItem('cn_dss_profile_pic') || null)
-  const [previewAvatar, setPreviewAvatar] = useState(avatar)
-  const [usernameStatus, setUsernameStatus] = useState(null) // { available, reason }
+  const [fullName, setFullName] = useState('')
+  const [username, setUsername] = useState('')
+  const [preview, setPreview] = useState(null)
+  const [removePhoto, setRemovePhoto] = useState(false)
+  const [usernameStatus, setUsernameStatus] = useState(null)
   const [checking, setChecking] = useState(false)
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
-  const [hasChanges, setHasChanges] = useState(false)
 
-  const original = { fullName: user?.name || '', username: user?.username || '', avatar: user?.profilePic || localStorage.getItem('cn_dss_profile_pic') || null }
+  const original = {
+    fullName: user?.name || '',
+    username: user?.username || '',
+    photo: user?.profilePic || null,
+  }
 
   useEffect(() => {
     setFullName(user?.name || '')
     setUsername(user?.username || '')
-    setPreviewAvatar(user?.profilePic || localStorage.getItem('cn_dss_profile_pic') || null)
-  }, [user])
+    setPreview(user?.profilePic || null)
+    setRemovePhoto(false)
+    setError('')
+    setSuccess('')
+    setUsernameStatus(null)
+  }, [user?.id])
 
-  useEffect(() => {
-    const changed = fullName !== original.fullName || username.toLowerCase() !== (original.username || '').toLowerCase() || previewAvatar !== original.avatar
-    setHasChanges(changed)
-  }, [fullName, username, previewAvatar])
+  const currentPhoto = removePhoto ? null : preview
+  const hasChanges =
+    fullName.trim() !== original.fullName ||
+    username.trim().toLowerCase() !== (original.username || '').toLowerCase() ||
+    currentPhoto !== original.photo
 
-  // username availability debounce
   useEffect(() => {
     const norm = username.trim().toLowerCase()
     if (!norm || norm === (original.username || '').toLowerCase()) {
@@ -40,7 +50,7 @@ export default function ProfileSettings() {
       return
     }
     if (!/^[a-z0-9_.]{3,20}$/.test(norm)) {
-      setUsernameStatus({ available: false, reason: '3-20 chars, letters, numbers, _ or .' })
+      setUsernameStatus({ available: false, reason: '3-20 chars: letters, numbers, _ or .' })
       return
     }
     setChecking(true)
@@ -55,41 +65,54 @@ export default function ProfileSettings() {
   const onFile = (e) => {
     const f = e.target.files?.[0]
     if (!f) return
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
-    if (!validTypes.includes(f.type)) {
-      setError('Only JPG, JPEG, PNG, WEBP allowed')
+    const okType = ['image/jpeg', 'image/jpg', 'image/png'].includes(f.type) || /\.(jpe?g|png)$/i.test(f.name)
+    if (!okType) {
+      setError('Only JPG or PNG images are allowed.')
       return
     }
-    if (f.size > 5 * 1024 * 1024) {
-      setError('Image must be less than 5MB')
+    if (f.size > MAX_BYTES) {
+      setError('Image must be smaller than 5MB.')
       return
     }
     setError('')
     const r = new FileReader()
-    r.onload = () => setPreviewAvatar(r.result)
+    r.onload = () => {
+      setPreview(r.result)
+      setRemovePhoto(false)
+    }
     r.readAsDataURL(f)
   }
 
   const handleRemove = () => {
-    if (!previewAvatar) return
-    if (!confirm('Remove profile photo?')) return
-    setPreviewAvatar(null)
+    if (!currentPhoto) return
+    if (!window.confirm('Remove your profile photo?')) return
+    setPreview(null)
+    setRemovePhoto(true)
   }
 
   const handleSave = async () => {
     setError('')
     setSuccess('')
-    if (!fullName.trim()) { setError('Full name is required'); return }
+    if (!fullName.trim()) {
+      setError('Full name is required.')
+      return
+    }
     const norm = username.trim().toLowerCase()
-    if (!/^[a-z0-9_.]{3,20}$/.test(norm)) { setError('Username must be 3-20 chars, letters, numbers, _ or .'); return }
-    if (usernameStatus && !usernameStatus.available) { setError(usernameStatus.reason); return }
+    if (!/^[a-z0-9_.]{3,20}$/.test(norm)) {
+      setError('Username must be 3-20 characters: letters, numbers, _ or .')
+      return
+    }
+    if (usernameStatus && !usernameStatus.available) {
+      setError(usernameStatus.reason)
+      return
+    }
     setSaving(true)
     try {
-      await updateProfile({ full_name: fullName.trim(), username: norm, avatar_url: previewAvatar, profilePic: previewAvatar })
+      await updateProfile({ full_name: fullName.trim(), username: norm, avatar_url: currentPhoto, profilePic: currentPhoto })
       setSuccess('Profile updated successfully.')
-      setTimeout(() => setSuccess(''), 2500)
+      setRemovePhoto(false)
     } catch (e) {
-      setError(e.message)
+      setError(e.message || 'Could not save profile.')
     } finally {
       setSaving(false)
     }
@@ -98,15 +121,19 @@ export default function ProfileSettings() {
   const handleCancel = () => {
     setFullName(original.fullName)
     setUsername(original.username)
-    setPreviewAvatar(original.avatar)
+    setPreview(original.photo)
+    setRemovePhoto(false)
     setError('')
     setSuccess('')
   }
 
   if (!user) {
     return (
-      <div className="page" style={{ background: '#000', minHeight: '80vh', display: 'grid', placeItems: 'center' }}>
-        <div className="card" style={{ background: '#0F172A' }}>Please <a href="/login" className="text-link">login</a> to edit profile.</div>
+      <div className="auth-page">
+        <div className="auth-card">
+          <h2>Profile settings</h2>
+          <p className="auth-sub">Please <Link to="/login" className="auth-link">log in</Link> to edit your profile.</p>
+        </div>
       </div>
     )
   }
@@ -115,82 +142,90 @@ export default function ProfileSettings() {
     <div className="page" style={{ background: '#000', minHeight: '100vh' }}>
       <section className="page-hero" style={{ background: '#000', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <div className="container">
-          <h1 style={{ color: '#fff' }}>Profile <span className="gradient-text">Settings</span></h1>
-          <p style={{ color: '#94A3B8' }}>Manage your personal information and profile photo.</p>
+          <h1 style={{ color: '#fff' }}>Profile <span style={{ color: '#fff' }}>Settings</span></h1>
+          <p style={{ color: '#94A3B8' }}>Update your photo, name and username.</p>
         </div>
       </section>
-
       <section className="page-body">
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 24, maxWidth: 1020, alignItems: 'start' }}>
-          {/* Left: Photo + Preview */}
-          <div className="card" style={{ background: '#0F172A', display: 'grid', gap: 16, justifyItems: 'center', textAlign: 'center' }}>
-            <div style={{ width: 140, height: 140, borderRadius: '50%', overflow: 'hidden', border: '3px solid rgba(167,139,250,0.5)', background: '#1E293B', display: 'grid', placeItems: 'center' }}>
-              {previewAvatar ? <img src={previewAvatar} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={48} color="#94A3B8" />}
-            </div>
+        <div className="container" style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: 20, maxWidth: 1020, alignItems: 'start' }}>
+          <div className="auth-card" style={{ width: '100%', display: 'grid', gap: 14, justifyItems: 'center', textAlign: 'center' }}>
+            <Avatar user={{ ...user, name: fullName || user.name, username: username || user.username }} photo={currentPhoto} size={132} style={{ border: '2px solid rgba(148,163,184,0.25)' }} />
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <button className="btn btn-primary btn-sm" onClick={() => fileRef.current?.click()}><Upload size={14} /> Upload</button>
-              <button className="btn btn-ghost btn-sm" onClick={() => fileRef.current?.click()}><Camera size={14} /> Select</button>
-              {previewAvatar && <button className="btn btn-ghost btn-sm" onClick={handleRemove} style={{ color: '#F87171', borderColor: 'rgba(239,68,68,0.3)' }}><Trash2 size={14} /> Remove</button>}
+              <button type="button" className="auth-btn ghost" style={{ padding: '9px 14px', fontSize: 13 }} onClick={() => fileRef.current?.click()}>
+                <Upload size={14} /> Upload
+              </button>
+              <button type="button" className="auth-btn ghost" style={{ padding: '9px 14px', fontSize: 13 }} onClick={() => fileRef.current?.click()}>
+                <Camera size={14} /> Select
+              </button>
+              {currentPhoto && (
+                <button type="button" className="auth-btn danger" style={{ padding: '9px 14px', fontSize: 13 }} onClick={handleRemove}>
+                  <Trash2 size={14} /> Remove
+                </button>
+              )}
             </div>
-            <input ref={fileRef} type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={onFile} />
-            <div style={{ fontSize: 11, color: '#64748B' }}>JPG, JPEG, PNG, WEBP · Max 5MB</div>
-
-            {/* Live Preview */}
-            <div style={{ width: '100%', marginTop: 8, padding: 16, borderRadius: 16, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', textAlign: 'left' }}>
-              <div style={{ fontSize: 11, letterSpacing: 1.2, color: '#64748B', fontWeight: 700, marginBottom: 10 }}>PREVIEW</div>
+            <input ref={fileRef} type="file" accept={ACCEPT} style={{ display: 'none' }} onChange={onFile} />
+            <div className="auth-hint">JPG or PNG · Max 5MB · Preview updates before saving</div>
+            <div style={{ width: '100%', padding: 14, borderRadius: 12, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', textAlign: 'left' }}>
+              <div style={{ fontSize: 11, letterSpacing: 1.2, color: '#64748b', fontWeight: 700, marginBottom: 10 }}>LIVE PREVIEW</div>
               <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                <div style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', background: '#1E293B', flexShrink: 0 }}>
-                  {previewAvatar ? <img src={previewAvatar} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', color: '#94A3B8' }}><User size={18} /></div>}
-                </div>
+                <Avatar user={{ ...user, name: fullName || user.name, username: username || user.username }} photo={currentPhoto} size={44} />
                 <div style={{ minWidth: 0 }}>
                   <div style={{ fontWeight: 700, color: '#fff', fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{fullName || 'Full Name'}</div>
-                  <div style={{ color: '#94A3B8', fontSize: 12 }}>@{username || 'username'}</div>
+                  <div style={{ color: '#94a3b8', fontSize: 12 }}>@{username || 'username'}</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right: Form */}
-          <div className="card" style={{ background: '#0F172A', display: 'grid', gap: 16 }}>
-            <div>
-              <label style={{ display: 'block', fontSize: 12, color: '#94A3B8', marginBottom: 6, fontWeight: 600 }}>Full Name</label>
-              <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g., Hari Krishnan" style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,0.3)', background: 'rgba(13,5,36,0.8)', color: '#fff' }} />
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: 12, color: '#94A3B8', marginBottom: 6, fontWeight: 600 }}>Username</label>
-              <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#64748B', fontSize: 14 }}>@</span>
-                <input value={username} onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, ''))} placeholder="username" style={{ width: '100%', padding: '12px 14px 12px 32px', borderRadius: 10, border: `1px solid ${usernameStatus?.available === false ? 'rgba(239,68,68,0.6)' : usernameStatus?.available ? 'rgba(34,197,94,0.6)' : 'rgba(148,163,184,0.3)'}`, background: 'rgba(13,5,36,0.8)', color: '#fff' }} />
+          <div className="auth-card" style={{ width: '100%' }}>
+            <div className="auth-form">
+              <div>
+                <label className="auth-label" htmlFor="ps-name">Full name</label>
+                <input id="ps-name" className="auth-input" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your display name" />
               </div>
-              <div style={{ minHeight: 18, marginTop: 6, fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-                {checking && <span style={{ color: '#94A3B8' }}>Checking...</span>}
-                {!checking && usernameStatus && (
-                  usernameStatus.available ? <span style={{ color: '#22c55e', display: 'flex', alignItems: 'center', gap: 6 }}><Check size={14} /> Username available</span>
-                    : <span style={{ color: '#F87171', display: 'flex', alignItems: 'center', gap: 6 }}><AlertCircle size={14} /> {usernameStatus.reason}</span>
-                )}
-                {!checking && !usernameStatus && <span style={{ color: '#64748B' }}>3-20 chars, letters, numbers, _ or .</span>}
+              <div>
+                <label className="auth-label" htmlFor="ps-user">Username</label>
+                <input
+                  id="ps-user"
+                  className="auth-input"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_.]/g, '').slice(0, 20))}
+                  placeholder="username"
+                />
+                <div style={{ minHeight: 18, marginTop: 6, fontSize: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {checking && <span style={{ color: '#94a3b8' }}>Checking availability...</span>}
+                  {!checking && usernameStatus && (
+                    usernameStatus.available
+                      ? <span className="auth-hint ok" style={{ marginTop: 0 }}><Check size={13} style={{ verticalAlign: -2 }} /> Username available</span>
+                      : <span className="auth-hint bad" style={{ marginTop: 0 }}><AlertCircle size={13} style={{ verticalAlign: -2 }} /> {usernameStatus.reason}</span>
+                  )}
+                  {!checking && !usernameStatus && <span className="auth-hint" style={{ marginTop: 0 }}>Unique, case-insensitive. 3-20 chars.</span>}
+                </div>
               </div>
-            </div>
-
-            <div>
-              <label style={{ display: 'block', fontSize: 12, color: '#94A3B8', marginBottom: 6, fontWeight: 600 }}>Email <span style={{ fontWeight: 400, color: '#64748B' }}>(read-only — managed separately)</span></label>
-              <input value={email} readOnly style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid rgba(148,163,184,0.15)', background: 'rgba(15,23,42,0.5)', color: '#94A3B8', cursor: 'not-allowed' }} />
-              <div style={{ fontSize: 11, color: '#64748B', marginTop: 6 }}>Email is unique and cannot be changed from this page. Contact support to change email.</div>
-            </div>
-
-            {error && <div style={{ padding: '10px 12px', borderRadius: 10, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#FCA5A5', fontSize: 13, display: 'flex', gap: 8 }}><AlertCircle size={16} /> {error}</div>}
-            {success && <div style={{ padding: '10px 12px', borderRadius: 10, background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)', color: '#6EE7B7', fontSize: 13, display: 'flex', gap: 8 }}><Check size={16} /> {success}</div>}
-
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
-              <button className="btn btn-ghost" onClick={handleCancel} disabled={saving} style={{ opacity: saving ? 0.6 : 1 }}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleSave} disabled={!hasChanges || saving || (usernameStatus && !usernameStatus.available)} style={{ opacity: !hasChanges || saving || (usernameStatus && !usernameStatus.available) ? 0.5 : 1, minWidth: 130, justifyContent: 'center' }}>
-                {saving ? 'Saving...' : 'Save Changes'}
-              </button>
+              <div>
+                <label className="auth-label">Email <span style={{ fontWeight: 400, color: '#64748b' }}>(read-only — managed separately)</span></label>
+                <input className="auth-input" value={user.email || ''} readOnly />
+                <div className="auth-hint">Email is unique and cannot be changed here.</div>
+              </div>
+              {error && <div className="auth-error"><AlertCircle size={15} style={{ flexShrink: 0, marginTop: 1 }} /> {error}</div>}
+              {success && <div className="auth-success"><Check size={15} style={{ flexShrink: 0, marginTop: 1 }} /> {success}</div>}
+              <div className="auth-actions">
+                <button type="button" className="auth-btn ghost" onClick={handleCancel} disabled={saving}>Cancel</button>
+                <button
+                  type="button"
+                  className="auth-btn"
+                  onClick={handleSave}
+                  disabled={!hasChanges || saving || (usernameStatus && !usernameStatus.available)}
+                  style={{ minWidth: 132 }}
+                >
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </section>
+      <style>{`@media (max-width: 900px) { .page-body .container { grid-template-columns: 1fr !important; } }`}</style>
     </div>
   )
 }

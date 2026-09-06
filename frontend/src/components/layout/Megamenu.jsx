@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { DEPARTMENTS, SITE_SEARCH } from '../../lib/data'
 import { useAuth } from '../../context/AuthContext'
+import Avatar from '../Avatar'
 
 const ICONS = { Activity, Monitor, Stethoscope, Pill, Syringe, Baby, Heart, Shield, HeartPulse, Gauge, User, Droplets, Ribbon, Cctv, Scissors, Apple, Milk }
 
@@ -175,28 +176,31 @@ useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 30))
               </>
             ) : (
               <>
-                <Link to="/mr-hari" className="nav-link" title={`${user?.name || 'My'} Folder`} style={{ background: '#000', border: '1px solid rgba(255,255,255,0.12)', fontSize: 13, fontWeight: 600 }}>{user?.name ? `${user.name.split(' ')[0]}'s Folder` : 'My Folder'}</Link>
                 <div className="nav-item" ref={profileRef} style={{ position: 'relative' }}>
-                  <button onClick={() => setProfileOpen(!profileOpen)} aria-label="profile" style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(167,139,250,0.6)', padding: 0, display: 'grid', placeItems: 'center', background: '#0F172A', cursor: 'pointer' }}>
-                    {user?.profilePic || localStorage.getItem('cn_dss_profile_pic') ? <img src={user?.profilePic || localStorage.getItem('cn_dss_profile_pic')} alt="profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={18} color="#A78BFA" />}
+                  <button onClick={() => setProfileOpen(!profileOpen)} aria-label="profile menu" style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(15,23,42,0.7)', border: '1px solid rgba(148,163,184,0.22)', borderRadius: 999, padding: '5px 12px 5px 5px', cursor: 'pointer' }}>
+                    <span style={{ borderRadius: '50%', overflow: 'hidden', display: 'block', border: '2px solid rgba(167,139,250,0.6)' }}>
+                      <Avatar user={user} size={32} />
+                    </span>
+                    <span style={{ textAlign: 'left', lineHeight: 1.2 }}>
+                      <span style={{ display: 'block', fontWeight: 700, color: '#fff', fontSize: 13, maxWidth: 120, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.name || 'User'}</span>
+                      <span style={{ display: 'block', color: '#94A3B8', fontSize: 11, maxWidth: 120, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>@{user?.username || 'username'}</span>
+                    </span>
+                    <ChevronDown size={14} color="#94A3B8" />
                   </button>
                   {profileOpen && (
                     <div style={{ position: 'absolute', top: 'calc(100% + 12px)', right: 0, width: 300, background: '#0F172A', border: '1px solid rgba(148,163,184,0.18)', borderRadius: 16, boxShadow: '0 20px 60px rgba(0,0,0,0.5)', overflow: 'hidden', zIndex: 100 }}>
                       <div style={{ padding: 16, display: 'flex', gap: 12, alignItems: 'center', borderBottom: '1px solid rgba(148,163,184,0.12)' }}>
-                        <div style={{ width: 48, height: 48, borderRadius: '50%', overflow: 'hidden', background: '#1E293B', flexShrink: 0, border: '1px solid rgba(255,255,255,0.08)' }}>
-                          {user?.profilePic || localStorage.getItem('cn_dss_profile_pic') ? <img src={user?.profilePic || localStorage.getItem('cn_dss_profile_pic')} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', color: '#A78BFA' }}><User size={20} /></div>}
-                        </div>
+                        <Avatar user={user} size={48} />
                         <div style={{ minWidth: 0, flex: 1 }}>
                           <div style={{ fontWeight: 700, color: '#fff', fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user?.name || 'User'}</div>
                           <div style={{ color: '#94A3B8', fontSize: 12, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>@{user?.username || (user?.email?.split('@')[0] || 'username')}</div>
                         </div>
                       </div>
                       <div style={{ padding: 8 }}>
-                        <Link to="/profile-settings" onClick={() => setProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, color: '#E2E8F0', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}><User size={16} /> Profile Settings</Link>
-                        <Link to="/account" onClick={() => setProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, color: '#E2E8F0', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}><Building2 size={16} /> Account Settings</Link>
-                        <Link to="/mr-hari" onClick={() => setProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, color: '#E2E8F0', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}><span style={{ width: 16, height: 16, borderRadius: 4, background: '#000', border: '1px solid rgba(255,255,255,0.15)', display: 'inline-block' }} /> {user?.name ? `${user.name.split(' ')[0]}'s Folder` : 'My Folder'}</Link>
+                        <Link to="/profile-settings" onClick={() => setProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, color: '#E2E8F0', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}><User size={16} /> Profile</Link>
+                        <Link to="/account" onClick={() => setProfileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, color: '#E2E8F0', textDecoration: 'none', fontSize: 13, fontWeight: 500 }}><Building2 size={16} /> Settings</Link>
                         <div style={{ height: 1, background: 'rgba(148,163,184,0.12)', margin: '8px 0' }} />
-                        <button onClick={() => { setProfileOpen(false); logout() }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(239,68,68,0.08)', color: '#F87171', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}><X size={16} /> Logout</button>
+                        <button onClick={() => { setProfileOpen(false); logout().then(() => window.location.assign('/login')).catch(() => window.location.assign('/login')) }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(239,68,68,0.08)', color: '#F87171', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}><X size={16} /> Logout</button>
                       </div>
                     </div>
                   )}
@@ -244,8 +248,9 @@ useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 30))
           ) : (
             <>
               <Link to="/mr-hari" className="mobile-link small">{user?.name ? `${user.name.split(' ')[0]}'s Folder` : 'My Folder'}</Link>
-              <Link to="/account" className="mobile-link small">Account Settings</Link>
-              <button onClick={logout} className="mobile-link small" style={{ background: 'none', border: 'none', textAlign: 'left', width: '100%', color: '#94A3B8' }}>Logout</button>
+              <Link to="/profile-settings" className="mobile-link small">Profile</Link>
+              <Link to="/account" className="mobile-link small">Settings</Link>
+              <button onClick={() => logout().then(() => window.location.assign('/login')).catch(() => window.location.assign('/login'))} className="mobile-link small" style={{ background: 'none', border: 'none', textAlign: 'left', width: '100%', color: '#94A3B8' }}>Logout</button>
             </>
           )}
         </div>
@@ -295,10 +300,7 @@ function MegaPanel({ data, align = 'center', onMouseEnter, onMouseLeave }) {
             {data.columns[activeCol].items.map((d) => {
               const Icon = ICONS[d.icon] || Building2
               return (
-                <Link key={d.slug} to={`/departments/${d.slug}`} className="mega-card">
-                  <span className="mega-card-ico" style={{ background: `${d.color}22`, color: d.color, overflow: 'hidden', padding: d.logo ? 0 : undefined }}>
-                    {d.logo ? <img src={d.logo} alt={`${d.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <Icon size={18} />}
-                  </span>
+                <Link key={d.slug} to={`/departments/${d.slug}`} className="mega-card" style={{ borderLeft: `3px solid ${d.color}` }}>
                   <strong>{d.name}</strong>
                   <em>{d.full}</em>
                 </Link>
