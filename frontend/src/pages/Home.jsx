@@ -140,14 +140,15 @@ export default function Home() {
           <div
             style={{
               position: 'absolute',
-              right: '0%',
+              left: '-14%',
               top: '50%',
-              width: '60%',
-              height: '110%',
-              minWidth: 480,
-              transform: 'translateY(-50%)',
-              transformOrigin: 'center right',
-              background: 'radial-gradient(600px 500px at 60% 50%, rgba(107,124,255,0.16), transparent 65%), radial-gradient(400px 380px at 80% 70%, rgba(167,139,250,0.10), transparent 65%)',
+              width: '92%',
+              height: '168%',
+              minWidth: 720,
+              minHeight: 900,
+              transform: 'translateY(-48%)',
+              transformOrigin: 'center left',
+              background: '#050508',
             }}
           >
             {splineOn ? <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} /> : null}

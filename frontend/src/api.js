@@ -44,6 +44,10 @@ export const api = {
   trainedEval: () => request('/api/trained/evaluation'),
   trainedPredictNumerical: (payload) => request('/api/trained/predict/numerical', { method: 'POST', body: JSON.stringify(payload) }),
   trainedPredictText: (payload) => request('/api/trained/predict/text', { method: 'POST', body: JSON.stringify(payload) }),
+  aiStatus: () => request('/api/ai/status'),
+  aiVision: (payload) => request('/api/ai/vision', { method: 'POST', body: JSON.stringify(payload) }),
+  aiReason: (payload) => request('/api/ai/reason', { method: 'POST', body: JSON.stringify(payload) }),
+  aiVerify: (payload) => request('/api/ai/verify', { method: 'POST', body: JSON.stringify(payload) }),
 }
 
 export function useFetch(fetcher, deps = []) {

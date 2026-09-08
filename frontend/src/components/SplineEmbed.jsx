@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState, Suspense, lazy } from 'react'
 
-// Primary hero is the new published prod URL provided by user — verified public (200)
+// Primary hero scene provided by user — verified public (200)
 const FILE_IDS = {
-  hero: 'FNrG0mwH9paHq-RG',
+  hero: 'g5b2e1OkWIlVwyxB',
   finale: 'fe773050-28ff-478f-a162-5006b36ecec0',
   departments: '7ffaf321-83b9-473b-a02a-674c1417ff31',
 }
 
 const SPLINE_SCENES = {
-  hero: 'https://prod.spline.design/FNrG0mwH9paHq-RG/scene.splinecode',
+  hero: 'https://prod.spline.design/g5b2e1OkWIlVwyxB/scene.splinecode',
   finale: `https://prod.spline.design/${FILE_IDS.finale}/scene.splinecode`,
   departments: `https://prod.spline.design/${FILE_IDS.departments}/scene.splinecode`,
 }
@@ -108,8 +108,8 @@ function SplineViewerInner({ scene, style, className }) {
       return new Promise((resolve) => {
         const s = document.createElement('script')
         s.type = 'module'
-        // Use stable 1.10.57 without Hana (2.0.10 has Hana wasm bug)
-        s.src = 'https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js'
+        // Viewer version from user export snippet
+        s.src = 'https://cdn.spline.design/@splinetool/viewer@2.0.40/build/spline-viewer.js'
         s.onload = () => resolve(true)
         s.onerror = () => resolve(false)
         document.head.appendChild(s)

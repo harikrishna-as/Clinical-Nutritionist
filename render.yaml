@@ -12,3 +12,5 @@ services:
         value: 3.12.0
       - key: PORT
         sync: false
+      - key: NVIDIA_API_KEY
+        sync: false

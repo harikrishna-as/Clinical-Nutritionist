@@ -419,6 +419,26 @@ def trained_predict_image():
     return jsonify({"prediction": "Mock image prediction", "top": []})
 
 
+@app.route("/api/ai/status")
+def ai_status():
+    return jsonify({"configured": False, "note": "NVIDIA AI runs on the manual backend (start.bat) with NVIDIA_API_KEY set."})
+
+
+@app.route("/api/ai/vision", methods=["POST"])
+def ai_vision():
+    return jsonify({"error": "NVIDIA AI not configured on Vercel. Run backend/app.py locally with NVIDIA_API_KEY set."}), 501
+
+
+@app.route("/api/ai/reason", methods=["POST"])
+def ai_reason():
+    return jsonify({"error": "NVIDIA AI not configured on Vercel. Run backend/app.py locally with NVIDIA_API_KEY set."}), 501
+
+
+@app.route("/api/ai/verify", methods=["POST"])
+def ai_verify():
+    return jsonify({"error": "NVIDIA AI not configured on Vercel. Run backend/app.py locally with NVIDIA_API_KEY set."}), 501
+
+
 @app.route("/api/phone/qr")
 def phone_qr():
     return jsonify({"url": "https://frontend-ten-omega-33.vercel.app/phone?room=demo", "note": "Mock — full phone pairing runs locally"})

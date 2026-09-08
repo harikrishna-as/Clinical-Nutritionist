@@ -359,6 +359,63 @@ def trained_predict_image():
     except Exception as e: return jsonify({"error": str(e)}), 500
 
 
+# --- NVIDIA AI (https://integrate.api.nvidia.com/v1) for higher accuracy ---
+# Set NVIDIA_API_KEY env var (local .env, Render dashboard, or Vercel env).
+@app.route("/api/ai/status")
+def ai_status():
+    try:
+        from services.nvidia_ai import is_configured, MODELS
+        return jsonify({"configured": is_configured(), "models": MODELS})
+    except Exception as e:
+        return jsonify({"configured": False, "error": str(e)})
+
+
+@app.route("/api/ai/vision", methods=["POST"])
+def ai_vision():
+    data = request.get_json(force=True, silent=True) or {}
+    image_url = data.get("image_url") or data.get("image") or ""
+    if not image_url:
+        return jsonify({"error": "Provide image_url (http(s) or data:image/...;base64)"}), 400
+    if image_url.startswith("data:") is False and not image_url.startswith("http"):
+        # assume raw base64 jpeg
+        image_url = f"data:image/jpeg;base64,{image_url}"
+    try:
+        from services.nvidia_ai import analyze_image
+        return jsonify(analyze_image(image_url, data.get("question", "What is in this image?"), data.get("model")))
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/ai/reason", methods=["POST"])
+def ai_reason():
+    data = request.get_json(force=True, silent=True) or {}
+    prompt = data.get("prompt") or data.get("text") or ""
+    if not prompt:
+        return jsonify({"error": "Provide prompt"}), 400
+    try:
+        from services.nvidia_ai import reason
+        return jsonify(reason(prompt, data.get("model")))
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/ai/verify", methods=["POST"])
+def ai_verify():
+    data = request.get_json(force=True, silent=True) or {}
+    try:
+        from services.nvidia_ai import nutrition_verify
+        return jsonify(nutrition_verify(
+            data.get("patient_summary", ""),
+            data.get("plan_text", ""),
+            data.get("model"),
+        ))
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
 # ---------------------------------------------------------------------------
 # Phone pairing: phone captures/selects a photo on its own browser (opened via
 # QR code), uploads it over the LAN, and the desktop lab window polls it back.
