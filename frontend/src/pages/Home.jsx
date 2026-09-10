@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import {
   ArrowRight, Activity, Building2, Pill, ScanLine, Sparkles,
   HeartPulse, Boxes, Database, LayoutDashboard, TrendingUp,
+  Settings, X, RotateCcw,
 } from 'lucide-react'
 import SplineEmbed, { SplineSection } from '../components/SplineEmbed'
 import Marquee, { MarqueeItem } from '../components/animations/Marquee'
@@ -53,10 +54,21 @@ const DEPT_CAROUSEL = DEPARTMENTS.map((d) => ({
   tags: (d.assessmentTools || []).slice(0, 3),
 }))
 
+const DEFAULT_ALIGN = { right: -14, width: 92, top: 50, text: 'left' }
+function loadAlign() {
+  try {
+    const raw = localStorage.getItem('hero-align')
+    if (raw) return { ...DEFAULT_ALIGN, ...JSON.parse(raw) }
+  } catch {}
+  return { ...DEFAULT_ALIGN }
+}
+
 export default function Home() {
   const [overview, setOverview] = useState(null)
   const [datasetCount, setDatasetCount] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [alignOpen, setAlignOpen] = useState(false)
+  const [align, setAlign] = useState(loadAlign)
   const gridRef = useRef(null)
   const pipeRef = useRef(null)
   const navigate = useNavigate()
@@ -76,6 +88,10 @@ export default function Home() {
     else timer = setTimeout(enable, 1800)
     return () => { try { idle && window.cancelIdleCallback(idle) } catch {} clearTimeout(timer) }
   }, [])
+  useEffect(() => {
+    try { localStorage.setItem('hero-align', JSON.stringify(align)) } catch {}
+  }, [align])
+  const setA = (k) => (e) => setAlign((a) => ({ ...a, [k]: Number(e.target.value) }))
 
   // Hero scroll — content drifts, Spline grows and stops at Marquee
   const { scrollY } = useScroll()
@@ -140,12 +156,11 @@ export default function Home() {
           <div
             style={{
               position: 'absolute',
-              right: '-14%',
-              top: '50%',
-              width: '92%',
-              height: '168%',
-              minWidth: 720,
-              minHeight: 900,
+              right: `${align.right}%`,
+              top: `${align.top}%`,
+              width: `${align.width}%`,
+              height: `${Math.round(align.width * 1.826)}%`,
+              minWidth: 480,
               transform: 'translateY(-48%)',
               transformOrigin: 'center right',
               background: '#050508',
@@ -154,10 +169,45 @@ export default function Home() {
             {splineOn ? <SplineEmbed scene="hero" style={{ width: '100%', height: '100%' }} /> : null}
           </div>
         </div>
+        {/* ==== Align controls — move/size the ball, align text, saved automatically ==== */}
+        <button
+          onClick={() => setAlignOpen(!alignOpen)}
+          aria-label="Align hero"
+          title="Align hero"
+          style={{ position: 'absolute', bottom: 18, right: 18, zIndex: 5, width: 42, height: 42, borderRadius: '50%', border: '1px solid rgba(148,163,184,0.3)', background: 'rgba(15,23,42,0.85)', color: '#A78BFA', cursor: 'pointer', display: 'grid', placeItems: 'center' }}
+        >
+          {alignOpen ? <X size={18} /> : <Settings size={18} />}
+        </button>
+        {alignOpen && (
+          <div style={{ position: 'absolute', bottom: 70, right: 18, zIndex: 5, width: 250, background: 'rgba(15,23,42,0.96)', border: '1px solid rgba(148,163,184,0.22)', borderRadius: 16, padding: 16, boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+              <strong style={{ color: '#fff', fontSize: 13 }}>Align hero</strong>
+              <button onClick={() => setAlign({ ...DEFAULT_ALIGN })} title="Reset" style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 12 }}><RotateCcw size={13} /> Reset</button>
+            </div>
+            {[
+              { k: 'right', label: 'Ball position (← →)', min: -30, max: 30 },
+              { k: 'width', label: 'Ball size', min: 40, max: 120 },
+              { k: 'top', label: 'Ball height (↑ ↓)', min: 20, max: 80 },
+            ].map((s) => (
+              <div key={s.k} style={{ marginBottom: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#94A3B8', marginBottom: 4 }}>
+                  <span>{s.label}</span><span style={{ color: '#fff' }}>{align[s.k]}%</span>
+                </div>
+                <input type="range" min={s.min} max={s.max} value={align[s.k]} onChange={setA(s.k)} style={{ width: '100%', accentColor: '#A78BFA' }} />
+              </div>
+            ))}
+            <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+              {['left', 'center'].map((t) => (
+                <button key={t} onClick={() => setAlign((a) => ({ ...a, text: t }))} style={{ flex: 1, padding: '8px 0', borderRadius: 10, border: align.text === t ? '1px solid #A78BFA' : '1px solid rgba(148,163,184,0.25)', background: align.text === t ? 'rgba(167,139,250,0.15)' : 'transparent', color: align.text === t ? '#fff' : '#94A3B8', cursor: 'pointer', fontSize: 13, fontWeight: 600, textTransform: 'capitalize' }}>{t}</button>
+              ))}
+            </div>
+            <div style={{ fontSize: 11, color: '#64748B', marginTop: 10 }}>Saved on this device automatically.</div>
+          </div>
+        )}
         <motion.div className="hero-shade" style={{ opacity: heroFade, position: 'absolute', inset: 0, zIndex: 1, pointerEvents: 'none' }} />
 
-        <div className="container hero-content">
-          <motion.div style={{ y: heroY, opacity: heroFade }}>
+        <div className="container hero-content" style={align.text === 'center' ? { margin: '0 auto', textAlign: 'center' } : undefined}>
+          <motion.div style={{ y: heroY, opacity: heroFade, display: 'flex', flexDirection: 'column', alignItems: align.text === 'center' ? 'center' : 'flex-start' }}>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
               <span className="hero-badge">ML-Validated • Evidence-Based Nutrition</span>
             </motion.div>
