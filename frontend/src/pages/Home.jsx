@@ -140,14 +140,14 @@ export default function Home() {
           <div
             style={{
               position: 'absolute',
-              left: '-14%',
+              right: '-14%',
               top: '50%',
               width: '92%',
               height: '168%',
               minWidth: 720,
               minHeight: 900,
               transform: 'translateY(-48%)',
-              transformOrigin: 'center left',
+              transformOrigin: 'center right',
               background: '#050508',
             }}
           >

@@ -25,6 +25,11 @@ export default function DeptHeroThree({ dept, opacity = 0.55 }) {
   useEffect(() => {
     const mount = mountRef.current
     if (!mount) return
+    // No WebGL (e.g. --no-sandbox / blocked GPU) → render nothing, never throw
+    try {
+      const test = document.createElement('canvas')
+      if (!(test.getContext('webgl') || test.getContext('webgl2'))) return
+    } catch { return }
     const width = mount.clientWidth
     const height = mount.clientHeight
 
@@ -33,7 +38,10 @@ export default function DeptHeroThree({ dept, opacity = 0.55 }) {
     camera.position.z = 6
     camera.position.y = 0.6
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    let renderer
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    } catch { return }
     renderer.setSize(width, height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8))
     mount.appendChild(renderer.domElement)
@@ -176,7 +184,12 @@ export default function DeptHeroThree({ dept, opacity = 0.55 }) {
       // gentle camera sway
       camera.position.x = Math.sin(t * 0.12) * 0.4
       camera.lookAt(0, 0, 0)
-      renderer.render(scene, camera)
+      try {
+        renderer.render(scene, camera)
+      } catch {
+        cancelAnimationFrame(raf)
+        return
+      }
       raf = requestAnimationFrame(animate)
     }
     animate()
@@ -192,7 +205,7 @@ export default function DeptHeroThree({ dept, opacity = 0.55 }) {
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)
-      renderer.dispose()
+      try { renderer.dispose() } catch {}
       mount.innerHTML = ''
     }
   }, [dept?.slug, dept?.color])

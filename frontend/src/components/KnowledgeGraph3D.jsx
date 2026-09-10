@@ -31,6 +31,11 @@ export default function KnowledgeGraph3D() {
     if (!mount || !graphData) return
     const { nodes, edges } = graphData
     if (!nodes || !edges) return
+    // No WebGL (e.g. --no-sandbox / blocked GPU) → render nothing, never throw
+    try {
+      const test = document.createElement('canvas')
+      if (!(test.getContext('webgl') || test.getContext('webgl2'))) return
+    } catch { return }
 
     const width = mount.clientWidth
     const height = mount.clientHeight
@@ -39,7 +44,10 @@ export default function KnowledgeGraph3D() {
     const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 100)
     camera.position.set(0, 2, 12)
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    let renderer
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    } catch { return }
     renderer.setSize(width, height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     mount.appendChild(renderer.domElement)
@@ -258,7 +266,12 @@ export default function KnowledgeGraph3D() {
       camera.position.y = camDistance * 0.45
       camera.lookAt(0, 0, 0)
 
-      renderer.render(scene, camera)
+      try {
+        renderer.render(scene, camera)
+      } catch {
+        cancelAnimationFrame(raf)
+        return
+      }
       raf = requestAnimationFrame(animate)
     }
     animate()
@@ -279,7 +292,7 @@ export default function KnowledgeGraph3D() {
       mount.removeEventListener('mousedown', onMouseDown)
       window.removeEventListener('mouseup', onMouseUp)
       mount.removeEventListener('mousemove', onMouseMoveDrag)
-      renderer.dispose()
+      try { renderer.dispose() } catch {}
       mount.innerHTML = ''
     }
   }, [graphData])
