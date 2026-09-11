@@ -222,10 +222,10 @@ h1, h2, h3, h4 { font-family: var(--display); line-height: 1.15; letter-spacing:
 .nav-brand { display: flex; align-items: center; gap: 10; text-decoration: none; }
 .nav-logo {
   width: 40px; height: 40px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, #3B82F6, #A78BFA);
-  color: #fff; font-weight: 800; font-size: 19px;
-  font-family: var(--display);
+  object-fit: cover; display: block;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: #000;
+  flex-shrink: 0;
 }
 .nav-title { font-weight: 700; font-size: 15px; line-height: 1.15; color: #fff; font-family: var(--display); }
 .nav-sub { font-size: 9.5px; color: #94A3B8; letter-spacing: 1.2px; }

@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div>
             <div className="nav-brand" style={{ marginBottom: 14 }}>
-              <div className="nav-logo">N</div>
+              <img src="/logo.png" alt="Clinical Nutritionist logo" className="nav-logo" />
               <div>
                 <div className="nav-title">Clinical Nutrition DSS</div>
                 <div className="nav-sub">ML-VERIFIED • EVIDENCE-BASED</div>

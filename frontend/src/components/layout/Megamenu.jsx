@@ -137,7 +137,7 @@ useMotionValueEvent(scrollY, 'change', (v) => setScrolled(v > 30))
       <nav ref={navRef} className={`site-nav ${scrolled ? 'scrolled' : ''}`}>
         <div className="container nav-inner">
           <Link to="/" className="nav-brand">
-            <div className="nav-logo">N</div>
+            <img src="/logo.png" alt="Clinical Nutritionist logo" className="nav-logo" />
             <div>
               <div className="nav-title">Clinical Nutrition DSS</div>
               <div className="nav-sub">ML-VERIFIED • EVIDENCE-BASED</div>

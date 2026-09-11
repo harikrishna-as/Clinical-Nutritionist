@@ -119,7 +119,7 @@ export default function Reports() {
                 <div className="report-paper">
                   <div className="report-paper-head">
                     <div>
-                      <div className="report-logo">N</div>
+                      <img src="/logo.png" alt="Clinical Nutritionist logo" className="report-logo" style={{ objectFit: 'cover' }} />
                       <h2>Clinical Nutrition Assessment Report</h2>
                       <p>Explainable Multi-Agent AI Clinical Nutrition DSS</p>
                     </div>
