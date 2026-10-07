@@ -51,9 +51,6 @@ export default function DepartmentDetail() {
         <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(800px 400px at 20% 30%, ${dept.color}16, transparent 65%), linear-gradient(180deg, rgba(7,12,28,0.22) 0%, rgba(7,12,28,0.88) 100%)`, pointerEvents: 'none' }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="dept-hero-inner">
-            <motion.div className="dept-hero-ico" style={{ background: `${dept.color}22`, color: dept.color, borderColor: `${dept.color}55`, overflow: 'hidden', padding: dept.logo ? 0 : undefined }} initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }}>
-              {dept.logo ? <img src={dept.logo} alt={`${dept.name} logo`} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} /> : <Icon size={44} />}
-            </motion.div>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
               <span className="dept-hero-code" style={{ color: dept.color }}>{dept.name} DEPARTMENT</span>
               <h1>{dept.full}</h1>

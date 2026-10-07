@@ -9,6 +9,9 @@ create table if not exists public.profiles (
   username text unique,
   email text unique,
   avatar_url text,
+  phone text,
+  dob date,
+  age int,
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()
 );
@@ -41,12 +44,15 @@ create trigger set_updated_at before update on public.profiles for each row exec
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, full_name, username, email)
+  insert into public.profiles (id, full_name, username, email, phone, dob, age)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email,'@',1)),
     coalesce(new.raw_user_meta_data->>'username', lower(replace(split_part(new.email,'@',1), '.', '_'))),
-    new.email
+    new.email,
+    new.raw_user_meta_data->>'phone',
+    case when new.raw_user_meta_data->>'dob' ~ '^\d{4}-\d{2}-\d{2}$' then (new.raw_user_meta_data->>'dob')::date else null end,
+    case when new.raw_user_meta_data->>'age' ~ '^\d+$' then (new.raw_user_meta_data->>'age')::int else null end
   )
   on conflict (id) do nothing;
   return new;

@@ -28,13 +28,13 @@ export default function SignUpExact() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     const fd = new FormData(e.target)
-    const name = fd.get('name')
-    const username = fd.get('username')
-    const email = fd.get('email')
-    const phone = fd.get('phone')
-    const password = fd.get('password')
-    const confirm = fd.get('confirm')
-    const gender = fd.get('gender')
+    const name = (fd.get('name') || document.querySelector('.signup-exact input[placeholder="Enter your name"]')?.value || '').toString()
+    const username = (fd.get('username') || document.querySelector('.signup-exact input[placeholder="Enter your username"]')?.value || '').toString()
+    const email = (fd.get('email') || document.querySelector('.signup-exact input[placeholder="Enter your email"]')?.value || '').toString()
+    const phone = (fd.get('phone') || document.querySelector('.signup-exact input[placeholder="Enter your number"]')?.value || '').toString()
+    const password = (fd.get('password') || document.querySelectorAll('.signup-exact input[placeholder="Enter your password"]')[0]?.value || '').toString()
+    const confirm = (fd.get('confirm') || document.querySelector('.signup-exact input[placeholder="Confirm your password"]')?.value || '').toString()
+    const gender = fd.get('gender') || document.querySelector('.signup-exact input[name="gender"]:checked')?.id || 'dot-1'
     if (password !== confirm) {
       alert('Passwords do not match')
       return
