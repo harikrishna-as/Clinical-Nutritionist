@@ -5,12 +5,12 @@ services:
     region: singapore # close to India
     plan: free
     buildCommand: pip install -r backend/requirements.txt
-    startCommand: gunicorn backend.app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    startCommand: gunicorn backend.app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120
     healthCheckPath: /api/health
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
-      - key: PORT
-        sync: false
+      - key: DATA_DIR
+        value: backend/data
       - key: NVIDIA_API_KEY
         sync: false

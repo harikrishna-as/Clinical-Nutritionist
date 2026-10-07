@@ -17,9 +17,9 @@ from flask_cors import CORS
 BASE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE)
 DATASETS_ROOT = os.environ.get("DATA_DIR") or os.path.dirname(PROJECT_ROOT)
-# DATA_DIR may be relative to the process cwd (Render runs from repo root)
+# DATA_DIR may be relative to the repo root (Render startCommand runs from repo root)
 if DATASETS_ROOT and not os.path.isabs(DATASETS_ROOT):
-    DATASETS_ROOT = os.path.abspath(DATASETS_ROOT)
+    DATASETS_ROOT = os.path.abspath(os.path.join(PROJECT_ROOT, DATASETS_ROOT))
 # AI output may live inside the project (NutritionAI_Website/Explainable_...) or beside it
 _candidates = [
     os.path.join(PROJECT_ROOT, "Explainable_Clinical_Nutrition_AI"),
