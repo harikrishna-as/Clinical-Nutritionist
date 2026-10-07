@@ -1,0 +1,205 @@
+{
+  "@type": "Dataset",
+  "identifier": "10.1038/s41597-020-0355-4",
+  "title": "Metadata record for: PIC, a paediatric-specific intensive care database",
+  "relatedPublications": [],
+  "repositories": [
+    {
+      "name": "PhysioNet",
+      "value": "https://doi.org/10.13026/bcbd-4t11",
+      "@type": "DataCatalog"
+    }
+  ],
+  "assays": [
+    {
+      "measurementType": {
+        "annotationValue": "Demographics",
+        "termAccession": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C16495",
+        "termSource": "NCIT",
+        "@type": "PropertyValue"
+      },
+      "technologyType": {
+        "annotationValue": "digital curation",
+        "termAccession": "http://purl.obolibrary.org/obo/OBI_0302914",
+        "termSource": "OBI",
+        "@type": "PropertyValue"
+      },
+      "@type": "variableMeasured"
+    },
+    {
+      "measurementType": {
+        "annotationValue": "Vital Signs Measurement",
+        "termAccession": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C49672",
+        "termSource": "NCIT",
+        "@type": "PropertyValue"
+      },
+      "technologyType": {
+        "annotationValue": "digital curation",
+        "termAccession": "http://purl.obolibrary.org/obo/OBI_0302914",
+        "termSource": "OBI",
+        "@type": "PropertyValue"
+      },
+      "@type": "variableMeasured"
+    },
+    {
+      "measurementType": {
+        "annotationValue": "Medication",
+        "termAccession": "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#C459",
+        "termSource": "NCIT",
+        "@type": "PropertyValue"
+      },
+      "technologyType": {
+        "annotationValue": "digital curation",
+        "termAccession": "http://purl.obolibrary.org/obo/OBI_0302914",
+        "termSource": "OBI",
+        "@type": "PropertyValue"
+      },
+      "@type": "variableMeasured"
+    },
+    {
+      "measurementType": {
+        "annotationValue": "clinical laboratory measurement",
+        "termAccession": "http://www.ebi.ac.uk/efo/EFO_0004297",
+        "termSource": "EFO",
+        "@type": "PropertyValue"
+      },
+      "technologyType": {
+        "annotationValue": "digital curation",
+        "termAccession": "http://purl.obolibrary.org/obo/OBI_0302914",
+        "termSource": "OBI",
+        "@type": "PropertyValue"
+      },
+      "@type": "variableMeasured"
+    },
+    {
+      "measurementType": {
+        "annotationValue": "fluid balance",
+        "@type": "PropertyValue"
+      },
+      "technologyType": {
+        "annotationValue": "digital curation",
+        "termAccession": "http://purl.obolibrary.org/obo/OBI_0302914",
+        "termSource": "OBI",
+        "@type": "PropertyValue"
+      },
+      "@type": "variableMeasured"
+    },
+    {
+      "measurementType": {
+        "annotationValue": "length of hospital stay",
+        "@type": "PropertyValue"
+      },
+      "technologyType": {
+        "annotationValue": "digital curation",
+        "termAccession": "http://purl.obolibrary.org/obo/OBI_0302914",
+        "termSource": "OBI",
+        "@type": "PropertyValue"
+      },
+      "@type": "variableMeasured"
+    },
+    {
+      "measurementType": {
+        "annotationValue": "survival time",
+        "termAccession": "http://www.ebi.ac.uk/efo/EFO_0000714",
+        "termSource": "EFO",
+        "@type": "PropertyValue"
+      },
+      "technologyType": {
+        "annotationValue": "digital curation",
+        "termAccession": "http://purl.obolibrary.org/obo/OBI_0302914",
+        "termSource": "OBI",
+        "@type": "PropertyValue"
+      },
+      "@type": "variableMeasured"
+    },
+    {
+      "measurementType": {
+        "annotationValue": "microbiological information",
+        "@type": "PropertyValue"
+      },
+      "technologyType": {
+        "annotationValue": "digital curation",
+        "termAccession": "http://purl.obolibrary.org/obo/OBI_0302914",
+        "termSource": "OBI",
+        "@type": "PropertyValue"
+      },
+      "@type": "variableMeasured"
+    }
+  ],
+  "factors": [],
+  "studyCharacteristics": {
+    "organism": [
+      {
+        "annotationValue": "Homo sapiens",
+        "termAccession": "http://purl.bioontology.org/ontology/NCBITAXON/9606",
+        "termSource": "NCBITAXON",
+        "@type": "PropertyValue"
+      }
+    ],
+    "environmentType": [
+      {
+        "annotationValue": "Intensive Care Unit",
+        "@type": "PropertyValue"
+      }
+    ],
+    "geographicalLocation": [
+      {
+        "annotationValue": "China",
+        "termAccession": "http://purl.obolibrary.org/obo/GAZ_00002845",
+        "termSource": "GAZ",
+        "@type": "Place"
+      }
+    ],
+    "@type": "variableMeasured"
+  },
+  "ontologySourceReferences": {
+    "NCIT": {
+      "name": "NCIT",
+      "description": "National Cancer Institute Thesaurus",
+      "file": "http://data.bioontology.org/ontologies/NCIT",
+      "version": "20.01d",
+      "@type": "DefinedTermSet"
+    },
+    "OBI": {
+      "name": "OBI",
+      "description": "Ontology for Biomedical Investigations",
+      "file": "http://data.bioontology.org/ontologies/OBI",
+      "version": "2018-08-27",
+      "@type": "DefinedTermSet"
+    },
+    "EFO": {
+      "name": "EFO",
+      "description": "Experimental Factor Ontology",
+      "file": "http://data.bioontology.org/ontologies/EFO",
+      "version": "2.105",
+      "@type": "DefinedTermSet"
+    },
+    "NCBITAXON": {
+      "name": "NCBITAXON",
+      "description": "National Center for Biotechnology Information (NCBI) Organismal Classification",
+      "file": "http://data.bioontology.org/ontologies/NCBITAXON",
+      "version": "2019AB",
+      "@type": "DefinedTermSet"
+    },
+    "GAZ": {
+      "name": "GAZ",
+      "description": "Gazetteer",
+      "file": "http://data.bioontology.org/ontologies/GAZ",
+      "version": "$Revision: 1.512 $",
+      "@type": "DefinedTermSet"
+    },
+    "@type": "CategoryCodeSet"
+  },
+  "comments": [
+    {
+      "name": "Created With Configuration",
+      "value": "1.0",
+      "@type": "SoftwareApplication"
+    },
+    {
+      "name": "Data Descriptor License",
+      "value": "CC-BY-4.0",
+      "@type": "CreativeWork"
+    }
+  ]
+}

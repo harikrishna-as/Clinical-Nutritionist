@@ -8,7 +8,9 @@ import numpy as np
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.dirname(BASE))
-DATASETS_ROOT = os.path.dirname(PROJECT_ROOT)
+DATASETS_ROOT = os.environ.get("DATA_DIR") or os.path.dirname(PROJECT_ROOT)
+if DATASETS_ROOT and not os.path.isabs(DATASETS_ROOT):
+    DATASETS_ROOT = os.path.abspath(DATASETS_ROOT)
 TRAIN_ROOT = os.path.join(DATASETS_ROOT, "training")
 
 # Paths

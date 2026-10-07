@@ -1,0 +1,612 @@
+{
+  "vitamin_deficiency_RandomForest_Small": {
+    "acc": 0.4791666666666667,
+    "bacc": 0.4791666666666667,
+    "f1_macro": 0.47264930276944006,
+    "f1_weighted": 0.47264930276944006,
+    "cm": [
+      [
+        12,
+        2,
+        3,
+        1,
+        0,
+        3,
+        0,
+        3
+      ],
+      [
+        2,
+        7,
+        2,
+        1,
+        4,
+        2,
+        0,
+        6
+      ],
+      [
+        1,
+        1,
+        5,
+        0,
+        3,
+        8,
+        0,
+        6
+      ],
+      [
+        0,
+        0,
+        0,
+        24,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        6,
+        2,
+        0,
+        7,
+        4,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        3,
+        1,
+        2,
+        12,
+        0,
+        5
+      ],
+      [
+        2,
+        0,
+        0,
+        1,
+        0,
+        1,
+        20,
+        0
+      ],
+      [
+        1,
+        5,
+        3,
+        2,
+        4,
+        3,
+        1,
+        5
+      ]
+    ],
+    "classes": [
+      "Vitamin A deficiency",
+      "Vitamin B complex deficiency",
+      "Vitamin B-12 deficiency",
+      "Vitamin B2 deficiency",
+      "Vitamin B3 deficieny",
+      "Vitamin B9 deficiency",
+      "Vitamin C deficiency",
+      "Vitamin D deficiency"
+    ]
+  },
+  "vitamin_deficiency_SVM_HOG_ML": {
+    "acc": 0.3958333333333333,
+    "bacc": 0.39583333333333337,
+    "f1_macro": 0.3832751744981995,
+    "f1_weighted": 0.3832751744981995,
+    "cm": [
+      [
+        8,
+        3,
+        5,
+        0,
+        1,
+        3,
+        1,
+        3
+      ],
+      [
+        2,
+        4,
+        2,
+        1,
+        5,
+        2,
+        2,
+        6
+      ],
+      [
+        1,
+        3,
+        3,
+        0,
+        3,
+        8,
+        4,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        24,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        7,
+        3,
+        1,
+        3,
+        2,
+        1,
+        6
+      ],
+      [
+        0,
+        4,
+        7,
+        1,
+        2,
+        6,
+        0,
+        4
+      ],
+      [
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        20,
+        0
+      ],
+      [
+        4,
+        3,
+        3,
+        0,
+        4,
+        1,
+        1,
+        8
+      ]
+    ],
+    "classes": [
+      "Vitamin A deficiency",
+      "Vitamin B complex deficiency",
+      "Vitamin B-12 deficiency",
+      "Vitamin B2 deficiency",
+      "Vitamin B3 deficieny",
+      "Vitamin B9 deficiency",
+      "Vitamin C deficiency",
+      "Vitamin D deficiency"
+    ]
+  },
+  "vitamin_deficiency_MLP_ViT_ResNet_proxy": {
+    "acc": 0.421875,
+    "bacc": 0.42187500000000006,
+    "f1_macro": 0.40219539560882056,
+    "f1_weighted": 0.4021953956088205,
+    "cm": [
+      [
+        10,
+        2,
+        5,
+        0,
+        0,
+        2,
+        0,
+        5
+      ],
+      [
+        4,
+        9,
+        1,
+        1,
+        1,
+        1,
+        0,
+        7
+      ],
+      [
+        0,
+        8,
+        9,
+        1,
+        1,
+        3,
+        0,
+        2
+      ],
+      [
+        0,
+        1,
+        0,
+        21,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        2,
+        9,
+        3,
+        1,
+        0,
+        2,
+        1,
+        6
+      ],
+      [
+        0,
+        8,
+        6,
+        1,
+        1,
+        3,
+        0,
+        5
+      ],
+      [
+        2,
+        0,
+        1,
+        1,
+        0,
+        0,
+        20,
+        0
+      ],
+      [
+        1,
+        8,
+        2,
+        1,
+        2,
+        0,
+        1,
+        9
+      ]
+    ],
+    "classes": [
+      "Vitamin A deficiency",
+      "Vitamin B complex deficiency",
+      "Vitamin B-12 deficiency",
+      "Vitamin B2 deficiency",
+      "Vitamin B3 deficieny",
+      "Vitamin B9 deficiency",
+      "Vitamin C deficiency",
+      "Vitamin D deficiency"
+    ]
+  },
+  "vitamin_deficiency_CV": {
+    "cv_acc_mean": 0.42374999999999996,
+    "cv_acc_std": 0.026040833319999568,
+    "scores": [
+      0.4,
+      0.40625,
+      0.4375,
+      0.46875,
+      0.40625
+    ]
+  },
+  "skincare_RandomForest_Small": {
+    "acc": 0.3347826086956522,
+    "bacc": 0.32708333333333334,
+    "f1_macro": 0.32431312589209327,
+    "f1_weighted": 0.3299985493179767,
+    "cm": [
+      [
+        12,
+        6,
+        2,
+        2,
+        2,
+        1,
+        2,
+        3
+      ],
+      [
+        6,
+        4,
+        7,
+        3,
+        4,
+        0,
+        3,
+        3
+      ],
+      [
+        5,
+        6,
+        13,
+        1,
+        0,
+        0,
+        3,
+        2
+      ],
+      [
+        2,
+        3,
+        3,
+        11,
+        3,
+        3,
+        4,
+        1
+      ],
+      [
+        1,
+        1,
+        3,
+        8,
+        11,
+        3,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        2,
+        4,
+        2,
+        3,
+        4,
+        2
+      ],
+      [
+        1,
+        2,
+        5,
+        9,
+        3,
+        1,
+        7,
+        2
+      ],
+      [
+        1,
+        4,
+        2,
+        2,
+        3,
+        0,
+        2,
+        16
+      ]
+    ],
+    "classes": [
+      "Acne_Mild",
+      "Acne_Moderate",
+      "Acne_Severe",
+      "Eczema_Mild",
+      "Eczema_Moderate",
+      "Eczema_Moderate (2)",
+      "Eczema_Severe",
+      "Normal"
+    ]
+  },
+  "skincare_SVM_HOG_ML": {
+    "acc": 0.26521739130434785,
+    "bacc": 0.26041666666666663,
+    "f1_macro": 0.26096033198296115,
+    "f1_weighted": 0.266095253249301,
+    "cm": [
+      [
+        10,
+        2,
+        3,
+        5,
+        2,
+        2,
+        2,
+        4
+      ],
+      [
+        7,
+        9,
+        3,
+        1,
+        2,
+        4,
+        3,
+        1
+      ],
+      [
+        7,
+        6,
+        7,
+        3,
+        2,
+        1,
+        1,
+        3
+      ],
+      [
+        3,
+        0,
+        3,
+        8,
+        4,
+        2,
+        5,
+        5
+      ],
+      [
+        3,
+        2,
+        1,
+        4,
+        8,
+        5,
+        4,
+        3
+      ],
+      [
+        1,
+        0,
+        2,
+        3,
+        7,
+        3,
+        3,
+        1
+      ],
+      [
+        2,
+        1,
+        2,
+        4,
+        7,
+        4,
+        6,
+        4
+      ],
+      [
+        4,
+        5,
+        0,
+        2,
+        2,
+        1,
+        6,
+        10
+      ]
+    ],
+    "classes": [
+      "Acne_Mild",
+      "Acne_Moderate",
+      "Acne_Severe",
+      "Eczema_Mild",
+      "Eczema_Moderate",
+      "Eczema_Moderate (2)",
+      "Eczema_Severe",
+      "Normal"
+    ]
+  },
+  "skincare_MLP_ViT_ResNet_proxy": {
+    "acc": 0.26956521739130435,
+    "bacc": 0.25833333333333336,
+    "f1_macro": 0.23738475518769275,
+    "f1_weighted": 0.24770583150020115,
+    "cm": [
+      [
+        10,
+        2,
+        4,
+        2,
+        4,
+        0,
+        2,
+        6
+      ],
+      [
+        5,
+        6,
+        10,
+        0,
+        1,
+        0,
+        3,
+        5
+      ],
+      [
+        9,
+        1,
+        9,
+        0,
+        0,
+        1,
+        3,
+        7
+      ],
+      [
+        3,
+        1,
+        2,
+        4,
+        7,
+        2,
+        5,
+        6
+      ],
+      [
+        3,
+        0,
+        2,
+        2,
+        12,
+        1,
+        4,
+        6
+      ],
+      [
+        1,
+        0,
+        2,
+        1,
+        10,
+        0,
+        4,
+        2
+      ],
+      [
+        1,
+        1,
+        4,
+        4,
+        9,
+        1,
+        4,
+        6
+      ],
+      [
+        4,
+        3,
+        2,
+        0,
+        2,
+        0,
+        2,
+        17
+      ]
+    ],
+    "classes": [
+      "Acne_Mild",
+      "Acne_Moderate",
+      "Acne_Severe",
+      "Eczema_Mild",
+      "Eczema_Moderate",
+      "Eczema_Moderate (2)",
+      "Eczema_Severe",
+      "Normal"
+    ]
+  },
+  "skincare_CV": {
+    "cv_acc_mean": 0.27749999999999997,
+    "cv_acc_std": 0.015103807466993215,
+    "scores": [
+      0.2875,
+      0.2875,
+      0.2625,
+      0.25625,
+      0.29375
+    ]
+  }
+}

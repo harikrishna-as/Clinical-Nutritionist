@@ -1,0 +1,201 @@
+PatientID,Age,Gender,BloodGroup,Department,Diagnosis,AdmissionDate,LengthOfStay_Days,SeverityLevel,TreatmentCost_USD,Readmitted
+P001,53,F,B-,Oncology,Breast Cancer,2026-02-27,1,Low,584.77,No
+P002,72,M,A+,Cardiology,Hypertension,2026-01-24,3,Medium,1772.2,No
+P003,73,F,B-,Neurology,Migraine,2026-04-25,5,Medium,1923.95,No
+P004,54,M,O+,Emergency,Trauma,2026-03-29,3,Medium,1685.35,No
+P005,49,F,A-,Orthopedics,Ligament Tear,2026-04-02,1,Low,347.51,No
+P006,34,F,A-,Neurology,Stroke,2026-04-07,6,High,5034.25,Yes
+P007,28,M,A+,Pediatrics,Chickenpox,2026-06-19,1,Medium,2169.62,No
+P008,40,M,O+,Pediatrics,Flu,2026-03-13,8,High,3535.25,No
+P009,35,F,B-,Emergency,Burn,2026-06-21,2,Low,524.9,No
+P010,51,M,B-,Oncology,Breast Cancer,2026-02-11,3,Medium,1750.61,No
+P011,34,M,B-,Pediatrics,Asthma,2026-01-09,6,Medium,2214.94,No
+P012,25,F,B-,General Medicine,Thyroid Disorder,2026-06-17,3,Low,637.92,No
+P013,48,M,B-,Oncology,Lymphoma,2026-05-24,1,Low,387.18,No
+P014,48,F,AB-,Oncology,Lymphoma,2026-02-26,9,High,5251.37,No
+P015,42,M,A-,Orthopedics,Spinal Injury,2026-02-09,1,Low,372.15,No
+P016,32,F,O+,Emergency,Accident Injury,2026-06-02,3,Medium,2256.42,No
+P017,51,M,A-,Neurology,Stroke,2026-06-24,5,High,4924.08,No
+P018,38,F,A-,Emergency,Burn,2026-03-17,2,Medium,1969.38,No
+P019,63,F,B+,General Medicine,Diabetes,2026-05-10,9,High,4240.78,No
+P020,39,M,B+,Emergency,Burn,2026-04-06,8,High,5935.55,No
+P021,36,F,A+,Neurology,Migraine,2026-01-29,3,Medium,1445.12,No
+P022,23,M,A-,Emergency,Burn,2026-01-22,3,Low,895.62,No
+P023,43,M,B+,Emergency,Trauma,2026-06-18,9,High,5441.64,No
+P024,33,F,B-,Neurology,Epilepsy,2026-05-19,2,Low,793.8,No
+P025,44,F,AB-,Oncology,Lung Cancer,2026-04-23,6,Medium,1237.6,No
+P026,59,M,AB-,General Medicine,Diabetes,2026-01-06,2,Low,610.1,No
+P027,46,M,B-,Orthopedics,Arthritis,2026-01-18,1,Low,498.03,No
+P028,51,M,AB+,Emergency,Burn,2026-06-21,4,Low,828.17,No
+P029,30,F,B-,Neurology,Epilepsy,2026-05-02,3,Medium,2203.28,No
+P030,50,F,AB-,Orthopedics,Fracture,2026-04-19,1,Low,571.33,No
+P031,46,M,A+,Emergency,Trauma,2026-04-14,5,Medium,1836.73,No
+P032,39,M,O-,Emergency,Trauma,2026-02-05,1,Low,373.65,No
+P033,50,M,O-,Pediatrics,Ear Infection,2026-05-21,2,Low,640.51,No
+P034,40,M,B+,Oncology,Breast Cancer,2026-04-15,5,High,4179.35,No
+P035,38,M,O+,Orthopedics,Spinal Injury,2026-01-01,6,High,4558.71,No
+P036,52,F,B+,Pediatrics,Ear Infection,2026-02-18,4,Low,897.46,No
+P037,49,M,A+,Cardiology,Hypertension,2026-05-30,3,Medium,1140.46,No
+P038,44,M,B+,Emergency,Poisoning,2026-01-18,2,Low,886.32,No
+P039,41,M,A+,Oncology,Lung Cancer,2026-06-08,2,Low,636.53,No
+P040,23,M,AB-,Oncology,Leukemia,2026-03-03,9,High,5831.93,Yes
+P041,59,M,A+,Orthopedics,Ligament Tear,2026-04-28,2,Medium,2266.05,No
+P042,19,M,AB+,Neurology,Migraine,2026-02-03,2,Low,859.05,No
+P043,27,M,O-,Cardiology,Heart Failure,2026-05-20,1,Low,529.97,No
+P044,35,F,A-,Neurology,Migraine,2026-02-04,1,Medium,1645.71,No
+P045,25,M,AB-,Cardiology,Heart Failure,2026-02-22,2,Low,548.06,No
+P046,72,F,A+,Emergency,Burn,2026-01-24,2,Medium,1619.23,No
+P047,59,F,B+,Emergency,Burn,2026-06-13,1,Low,542.75,No
+P048,68,F,A+,Orthopedics,Spinal Injury,2026-01-29,1,Medium,1689.24,Yes
+P049,49,F,B+,Oncology,Lung Cancer,2026-04-21,5,Medium,1636.14,Yes
+P050,21,M,AB-,Pediatrics,Chickenpox,2026-02-23,8,High,5256.98,No
+P051,49,F,B+,Oncology,Breast Cancer,2026-03-02,2,Low,572.0,No
+P052,49,M,B+,Emergency,Poisoning,2026-03-27,8,High,4245.65,No
+P053,78,M,O+,General Medicine,Anemia,2026-01-10,2,Low,520.87,No
+P054,56,F,AB-,Orthopedics,Arthritis,2026-03-20,6,High,5507.08,No
+P055,65,M,O+,Emergency,Poisoning,2026-03-26,1,Low,616.34,No
+P056,52,F,AB-,Cardiology,Arrhythmia,2026-01-08,3,Low,949.68,No
+P057,40,F,A+,Pediatrics,Asthma,2026-01-28,2,Medium,1406.43,No
+P058,30,M,O+,Pediatrics,Chickenpox,2026-05-28,1,Low,554.12,No
+P059,49,M,AB-,Cardiology,Coronary Artery Disease,2026-04-21,3,Low,761.3,No
+P060,71,M,AB+,Oncology,Leukemia,2026-05-10,3,Medium,2880.06,No
+P061,56,F,B+,General Medicine,Thyroid Disorder,2026-02-19,1,Low,412.91,No
+P062,53,F,O+,General Medicine,Anemia,2026-05-21,3,Medium,2127.75,No
+P063,53,F,O-,Pediatrics,Chickenpox,2026-04-24,1,Low,435.32,No
+P064,17,M,A-,Orthopedics,Spinal Injury,2026-03-14,3,Medium,2181.15,No
+P065,48,M,AB+,Oncology,Leukemia,2026-02-27,1,Low,537.32,No
+P066,51,F,A-,Orthopedics,Fracture,2026-04-27,1,Low,535.37,No
+P067,46,F,O-,Oncology,Lung Cancer,2026-04-13,2,Medium,1874.17,No
+P068,55,M,O+,Oncology,Breast Cancer,2026-02-26,9,High,6133.8,Yes
+P069,20,M,A-,Oncology,Lymphoma,2026-04-27,1,Low,571.5,No
+P070,54,F,O+,General Medicine,Thyroid Disorder,2026-05-21,8,High,8812.73,No
+P071,55,M,AB+,Orthopedics,Spinal Injury,2026-05-14,5,Medium,2457.75,No
+P072,56,F,B-,Orthopedics,Ligament Tear,2026-03-11,1,Low,595.9,No
+P073,31,M,O+,Neurology,Migraine,2026-06-27,1,Low,471.46,No
+P074,46,F,O-,Orthopedics,Fracture,2026-04-17,5,Low,813.27,No
+P075,57,M,O+,Emergency,Accident Injury,2026-05-03,1,Low,472.81,Yes
+P076,64,F,B-,Pediatrics,Chickenpox,2026-05-05,4,Medium,1575.85,No
+P077,32,F,O+,General Medicine,Infection,2026-02-12,3,Low,686.96,No
+P078,48,M,A-,Orthopedics,Fracture,2026-06-14,8,High,4308.4,No
+P079,83,F,O+,Emergency,Accident Injury,2026-03-25,2,Low,437.49,No
+P080,48,F,AB+,Pediatrics,Chickenpox,2026-04-18,3,Medium,2179.66,No
+P081,30,M,AB-,Cardiology,Coronary Artery Disease,2026-02-27,1,Low,570.5,No
+P082,60,M,B-,Emergency,Trauma,2026-01-06,2,Medium,1614.56,No
+P083,36,M,B-,Orthopedics,Arthritis,2026-04-30,3,Medium,2522.05,No
+P084,52,M,B+,Emergency,Burn,2026-03-21,1,Low,611.79,No
+P085,83,F,O+,Cardiology,Arrhythmia,2026-02-20,5,Medium,1530.24,Yes
+P086,36,F,A-,Oncology,Lung Cancer,2026-05-25,3,Low,689.23,No
+P087,52,M,AB-,Pediatrics,Ear Infection,2026-01-04,5,Medium,1752.4,No
+P088,43,F,O-,Emergency,Accident Injury,2026-02-09,1,Low,417.56,No
+P089,40,F,O-,Oncology,Leukemia,2026-04-22,2,Medium,2352.15,No
+P090,19,M,A-,Neurology,Stroke,2026-03-13,1,Low,533.07,No
+P091,70,F,AB-,Orthopedics,Spinal Injury,2026-01-08,1,Medium,2056.19,No
+P092,45,F,AB+,Pediatrics,Asthma,2026-03-29,2,Medium,1913.29,No
+P093,48,M,A-,Neurology,Stroke,2026-03-03,3,Medium,1886.18,No
+P094,38,F,O-,General Medicine,Anemia,2026-01-05,4,Medium,2228.3,Yes
+P095,73,F,AB-,Orthopedics,Spinal Injury,2026-05-02,2,Medium,2539.89,No
+P096,9,F,AB-,Pediatrics,Ear Infection,2026-06-29,7,High,5428.32,No
+P097,50,M,AB-,Pediatrics,Chickenpox,2026-01-31,1,Low,499.19,No
+P098,36,F,AB+,Emergency,Poisoning,2026-05-31,1,Low,604.96,No
+P099,51,M,AB+,Neurology,Stroke,2026-02-28,6,High,5619.6,No
+P100,50,M,AB+,Pediatrics,Flu,2026-01-12,5,Medium,2336.11,No
+P101,30,M,O-,Neurology,Stroke,2026-01-27,3,Medium,2140.24,No
+P102,55,F,AB-,Neurology,Stroke,2026-02-17,3,Medium,1904.0,No
+P103,67,M,O+,Pediatrics,Ear Infection,2026-05-06,1,Low,574.71,No
+P104,41,F,A-,Oncology,Breast Cancer,2026-03-05,1,Low,629.88,No
+P105,59,M,O+,Emergency,Accident Injury,2026-04-26,5,Medium,2589.55,No
+P106,45,M,A-,Pediatrics,Ear Infection,2026-02-23,3,Low,728.97,No
+P107,50,M,A-,Pediatrics,Flu,2026-02-10,1,Low,529.7,Yes
+P108,55,M,AB+,General Medicine,Infection,2026-03-14,1,Low,729.24,No
+P109,26,F,B-,General Medicine,Diabetes,2026-04-19,2,Medium,2174.29,Yes
+P110,59,M,A-,Orthopedics,Arthritis,2026-01-16,8,High,5588.35,Yes
+P111,44,F,AB+,Pediatrics,Chickenpox,2026-06-29,1,Low,527.58,No
+P112,32,M,O+,Pediatrics,Ear Infection,2026-03-24,3,Low,745.29,No
+P113,30,M,AB+,Cardiology,Hypertension,2026-05-28,1,Low,561.29,Yes
+P114,34,F,AB+,Emergency,Poisoning,2026-02-16,2,Medium,1831.38,No
+P115,49,F,AB-,General Medicine,Infection,2026-04-15,7,High,4368.96,Yes
+P116,49,F,O+,Oncology,Breast Cancer,2026-06-27,5,High,3192.54,No
+P117,32,M,O-,Oncology,Lymphoma,2026-01-23,7,High,5150.91,Yes
+P118,71,F,A+,Pediatrics,Flu,2026-06-18,9,High,4920.06,No
+P119,44,F,O-,General Medicine,Infection,2026-06-10,1,Low,518.15,No
+P120,39,M,AB+,Cardiology,Heart Failure,2026-04-23,2,Low,557.28,No
+P121,54,M,B+,General Medicine,Diabetes,2026-03-21,4,Low,869.12,No
+P122,52,M,O-,Neurology,Nerve Disorder,2026-01-31,3,Low,719.88,No
+P123,49,F,AB+,Orthopedics,Spinal Injury,2026-04-17,8,High,5057.68,No
+P124,31,M,O+,General Medicine,Anemia,2026-02-18,4,Medium,2166.75,No
+P125,71,F,O+,Neurology,Epilepsy,2026-03-29,9,High,7233.18,No
+P126,31,F,AB+,Neurology,Stroke,2026-05-31,9,High,5263.34,No
+P127,84,F,O-,Oncology,Lymphoma,2026-03-30,6,High,3880.28,Yes
+P128,34,F,B-,Emergency,Accident Injury,2026-06-28,1,Medium,1422.84,No
+P129,31,F,A+,General Medicine,Anemia,2026-03-23,8,High,5301.76,No
+P130,78,M,O-,Oncology,Lymphoma,2026-01-10,3,Low,702.31,No
+P131,28,F,A-,Neurology,Stroke,2026-05-15,8,High,3639.77,No
+P132,77,M,A-,Cardiology,Heart Failure,2026-05-01,3,Low,713.08,No
+P133,14,F,A-,Pediatrics,Chickenpox,2026-03-26,6,Medium,2177.05,No
+P134,67,F,A+,Emergency,Accident Injury,2026-06-08,5,High,4000.62,Yes
+P135,45,M,O+,Oncology,Leukemia,2026-01-26,8,High,4509.93,No
+P136,56,F,A+,Oncology,Breast Cancer,2026-01-12,1,Low,505.76,No
+P137,47,F,B+,Cardiology,Arrhythmia,2026-03-04,2,Low,711.16,No
+P138,24,M,O+,Neurology,Epilepsy,2026-06-08,1,Low,647.77,No
+P139,50,F,O-,General Medicine,Anemia,2026-03-07,1,Low,675.12,No
+P140,47,M,A-,Emergency,Accident Injury,2026-04-24,9,High,5147.52,No
+P141,82,F,AB+,Neurology,Stroke,2026-04-27,6,Medium,2126.64,No
+P142,62,M,B-,Orthopedics,Spinal Injury,2026-04-08,8,High,6328.63,No
+P143,27,F,A+,Neurology,Stroke,2026-06-18,9,High,6138.42,No
+P144,13,F,AB+,Cardiology,Hypertension,2026-02-28,6,High,2680.77,No
+P145,40,F,B+,Pediatrics,Asthma,2026-06-10,5,Medium,2663.38,Yes
+P146,46,F,A+,Oncology,Breast Cancer,2026-05-29,4,Low,741.99,No
+P147,14,F,O+,Orthopedics,Fracture,2026-02-14,7,High,5224.07,Yes
+P148,44,F,B+,Emergency,Burn,2026-03-07,1,Medium,1586.58,No
+P149,21,F,A-,General Medicine,Thyroid Disorder,2026-04-30,5,Medium,2237.47,No
+P150,28,F,AB-,Orthopedics,Arthritis,2026-01-24,7,High,3780.79,No
+P151,43,F,AB-,Cardiology,Arrhythmia,2026-06-22,5,Medium,1730.35,No
+P152,54,F,A-,Pediatrics,Ear Infection,2026-06-22,7,High,4047.13,Yes
+P153,43,M,A-,Cardiology,Arrhythmia,2026-06-12,6,High,4166.35,No
+P154,23,M,B+,Oncology,Leukemia,2026-01-12,6,Medium,2233.22,No
+P155,32,M,B+,Pediatrics,Ear Infection,2026-04-10,2,Low,628.77,No
+P156,41,M,O+,Oncology,Lymphoma,2026-06-17,4,Medium,2264.07,Yes
+P157,35,F,A+,General Medicine,Infection,2026-06-26,7,High,4564.95,No
+P158,3,F,A-,General Medicine,Infection,2026-06-25,5,High,5966.87,No
+P159,74,F,B-,Oncology,Leukemia,2026-02-01,1,Low,577.66,No
+P160,50,M,A+,Emergency,Accident Injury,2026-01-13,6,Low,1231.96,No
+P161,42,M,A-,Orthopedics,Arthritis,2026-05-22,2,Medium,1137.58,No
+P162,48,M,A+,Orthopedics,Arthritis,2026-03-12,1,Low,377.77,No
+P163,33,M,A-,Orthopedics,Arthritis,2026-06-19,2,Medium,2372.68,No
+P164,60,M,AB-,Orthopedics,Fracture,2026-01-05,1,Low,667.99,No
+P165,46,M,A-,Cardiology,Heart Failure,2026-05-02,2,Medium,2311.17,No
+P166,54,M,A+,Pediatrics,Flu,2026-06-18,2,Medium,1668.62,No
+P167,29,F,O+,General Medicine,Diabetes,2026-04-20,1,Low,612.62,No
+P168,79,M,AB-,General Medicine,Infection,2026-06-05,1,Low,576.3,No
+P169,33,F,O+,Orthopedics,Ligament Tear,2026-06-02,3,Medium,1637.85,No
+P170,29,M,B-,General Medicine,Infection,2026-04-21,2,Low,556.9,No
+P171,49,F,O+,Orthopedics,Spinal Injury,2026-04-17,1,Low,496.11,No
+P172,28,F,AB-,Pediatrics,Ear Infection,2026-02-09,1,Low,595.54,No
+P173,54,M,A-,General Medicine,Diabetes,2026-04-21,1,Low,529.93,No
+P174,58,M,AB-,Oncology,Leukemia,2026-06-21,5,High,5143.36,Yes
+P175,33,M,AB+,Pediatrics,Ear Infection,2026-06-03,8,High,4196.74,Yes
+P176,12,F,B-,Cardiology,Heart Failure,2026-01-28,1,Low,524.81,No
+P177,49,F,B-,Neurology,Stroke,2026-04-20,1,Low,583.86,No
+P178,15,F,A+,Emergency,Trauma,2026-02-16,3,Medium,1405.87,No
+P179,33,F,A+,Emergency,Burn,2026-02-16,8,High,4099.59,No
+P180,38,M,A-,Neurology,Nerve Disorder,2026-05-16,3,Low,702.31,No
+P181,60,F,AB+,General Medicine,Infection,2026-03-25,1,Low,572.98,No
+P182,70,M,B+,Neurology,Migraine,2026-06-08,4,High,3683.1,Yes
+P183,55,F,O-,Cardiology,Arrhythmia,2026-06-05,1,Low,557.11,No
+P184,34,M,AB-,Pediatrics,Asthma,2026-04-21,4,Medium,1921.62,Yes
+P185,66,F,A+,Oncology,Lymphoma,2026-02-26,4,Medium,2106.6,No
+P186,37,F,B-,Neurology,Migraine,2026-02-05,1,Low,476.74,No
+P187,52,F,O+,Pediatrics,Chickenpox,2026-02-14,1,Low,548.98,No
+P188,82,F,A-,Neurology,Epilepsy,2026-04-12,5,Medium,1977.74,No
+P189,66,M,AB-,Cardiology,Coronary Artery Disease,2026-05-28,1,Low,316.19,No
+P190,26,F,A+,General Medicine,Infection,2026-03-25,1,Low,484.85,No
+P191,45,F,A-,Neurology,Nerve Disorder,2026-04-22,10,High,5526.93,No
+P192,41,M,O+,Orthopedics,Spinal Injury,2026-03-21,5,Medium,1270.82,No
+P193,49,M,A-,Orthopedics,Ligament Tear,2026-05-16,5,Medium,1545.53,No
+P194,65,M,B-,Emergency,Burn,2026-01-27,2,Low,598.47,No
+P195,56,M,B+,Orthopedics,Arthritis,2026-06-10,7,Medium,2408.2,No
+P196,49,F,AB-,Emergency,Accident Injury,2026-02-08,3,Medium,1541.31,No
+P197,59,F,A+,General Medicine,Infection,2026-04-01,2,Medium,1766.84,No
+P198,36,M,AB-,Pediatrics,Ear Infection,2026-03-15,4,Medium,2105.12,Yes
+P199,63,F,O-,Emergency,Trauma,2026-05-29,3,Medium,1758.8,No
+P200,27,M,AB-,Emergency,Trauma,2026-06-04,1,Low,557.73,No
